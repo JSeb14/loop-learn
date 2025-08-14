@@ -6,7 +6,7 @@ export type FlashcardSet = {
   name: string;
   description: string;
   isPrivate: boolean;
-  subject: string | null;
+  subject: string;
   cover_image: string | null;
   user_id: string;
 };
