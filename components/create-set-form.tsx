@@ -94,7 +94,7 @@ export const CreateSetForm = (): ReactElement => {
 
         <div>
           <label
-            htmlFor="isPrivate"
+            htmlFor="subject"
             className="block text-sm font-medium text-white-900 dark:text-white mb-2"
           >
             Select a Subject for this Set
