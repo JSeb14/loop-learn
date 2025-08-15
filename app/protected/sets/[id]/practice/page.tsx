@@ -1,9 +1,79 @@
 "use client";
 
-import { Flashcard } from "@/app/util/flashcardStore";
+import { Flashcard, useFlashcardStore } from "@/app/util/flashcardStore";
+import { useState } from "react";
+import chevron_forward_icon from "@/app/assets/chevron_forward_icon.svg";
+import chevron_backward_icon from "@/app/assets/chevron_backward_icon.svg";
+import chevron_backward_disabled_icon from "@/app/assets/chevron_backward_disabled_icon.svg";
+import chevron_forward_disabled_icon from "@/app/assets/chevron_forward_disabled_icon.svg";
+import Image from "next/image";
+import StartingSideForm from "@/components/ui/StartingSideForm";
+import Slide from "@/components/Slide";
 
-export default function Practice({flashcards}: {flashcards: Flashcard[]}){
-    return(
-        <div>Practice!</div>
-    );
+export default function Practice() {
+  const flashcards: Flashcard[] = useFlashcardStore(
+    (state) => state.flashcards
+  );
+
+  const [startFront, setStartFront] = useState<boolean>(true);
+  const [settingUp, setSettingUp] = useState<boolean>(true);
+
+  const [index, setIndex] = useState(0);
+
+  const incrementIndex = () => {
+    if (index + 1 < flashcards.length) setIndex(index + 1);
+  };
+
+  const decrementIndex = () => {
+    if (index > 0) setIndex(index - 1);
+  };
+
+  return (
+    <>
+      {settingUp ? (
+        <StartingSideForm
+          setStartFront={setStartFront}
+          setSettingUp={setSettingUp}
+        />
+      ) : (
+        <div className="flex flex-col items-center gap-4 w-full">
+          <Slide
+            key={flashcards[index].id}
+            flashcard={flashcards[index]}
+            startFront={startFront}
+          />
+          <div>
+            <button disabled={index === 0} onClick={decrementIndex}>
+              <Image
+                src={
+                  index === 0
+                    ? chevron_backward_disabled_icon
+                    : chevron_backward_icon
+                }
+                alt="Previous card"
+                width={48}
+              />
+            </button>
+            <button
+              disabled={index === flashcards.length - 1}
+              onClick={incrementIndex}
+            >
+              <Image
+                src={
+                  index === flashcards.length - 1
+                    ? chevron_forward_disabled_icon
+                    : chevron_forward_icon
+                }
+                alt="Next card"
+                width={48}
+              />
+            </button>
+          </div>
+          <div>
+            {index + 1} / {flashcards.length}
+          </div>
+        </div>
+      )}
+    </>
+  );
 }

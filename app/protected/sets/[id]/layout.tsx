@@ -13,7 +13,7 @@ export default function SetLayout({ children }: { children: React.ReactNode }) {
   const path = usePathname();
 
   const items = [
-    { label: "Back", link: "/protected/sets", icon: back_icon },
+    { label: "Back to Sets", link: "/protected/sets", icon: back_icon },
     { label: "Manage Set", link: `/protected/sets/${id}`, icon: manage_icon },
     {
       label: "Practice",
