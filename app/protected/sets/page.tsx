@@ -14,5 +14,5 @@ export default async function Sets() {
 
   const {sets, error} = await getAllSets();    
 
-  return <FlashcardSetList sets={sets} />;
+  return <FlashcardSetList initialSets={sets} />;
 }

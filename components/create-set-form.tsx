@@ -1,7 +1,6 @@
 "use client";
 
 import { ReactElement, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { redirect } from "next/navigation";
 
 export const CreateSetForm = (): ReactElement => {
@@ -25,28 +24,27 @@ export const CreateSetForm = (): ReactElement => {
     "Technology",
   ];
 
-  const onSubmit = async (event) => {
-    event.preventDefault();
-    const supabase = await createClient();
+  const onSubmit = async () => {
+    const response = await fetch("/api/sets", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        description,
+        isPrivate,
+        subject,
+      }),
+    });
 
-    const { error } = await supabase
-      .from("flashcard_set")
-      .insert([
-        {
-          name: name,
-          description: description,
-          isPrivate: isPrivate,
-          subject: subject,
-        },
-      ])
-      .select();
-
-    if (error) {
-      console.log("Error: " + error);
+    if (response.ok) {
+      alert(`Your flashcard set was successfully created!`);
+      redirect("/protected/sets");
+    } else {
+      const errorData = await response.json();
+      alert(`Error: ${errorData.error}`);
     }
-
-    alert(`Your flashcard set was successfully created!`);
-    redirect("/protected/sets");
   };
 
   return (
@@ -137,7 +135,6 @@ export const CreateSetForm = (): ReactElement => {
         <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-3" />
 
         <button
-          type="submit"
           onClick={onSubmit}
           className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
         >

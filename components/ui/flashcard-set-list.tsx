@@ -1,26 +1,32 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import Image from "next/image";
 import delete_icon from "@/app/assets/delete_icon.svg";
 import { FlashcardSet } from "@/app/util/flashcardStore";
 import add_icon from "@/app/assets/add_icon.svg";
+import { useState } from "react";
 
 export default function FlashcardSetList({
-  sets,
+  initialSets,
 }: {
-  sets: FlashcardSet[] | null;
+  initialSets: FlashcardSet[] | null;
 }) {
+  const [sets, setSets] = useState(initialSets);
+
   async function deleteSet(setId: string) {
     if (window.confirm("Are you sure you'd like to delete this set?")) {
-      const supabase = await createClient();
-      const { error } = await supabase
-        .from("flashcard_set")
-        .delete()
-        .eq("id", setId);
+      const response = await fetch(`/api/sets/${setId}`, {
+        method: "DELETE",
+      });
 
-      if (error) {
+      if (!response.ok) {
+        alert("Failed to delete set.");
+      } else {
+        if (sets) {
+          const updatedSets = sets.filter((set) => set.id !== setId);
+          setSets(updatedSets);
+        }
       }
     }
   }

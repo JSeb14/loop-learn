@@ -1,7 +1,6 @@
 "use client";
 
 import { FlashcardSet, useFlashcardStore } from "@/app/util/flashcardStore";
-import { createClient } from "@/lib/supabase/client";
 import { Dispatch, SetStateAction, useState } from "react";
 
 export default function UpdateSet({
@@ -33,26 +32,36 @@ export default function UpdateSet({
     "Technology",
   ];
 
-  async function update() {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from("flashcard_set")
-      .update({
-        name: name,
-        description: description,
-        isPrivate: isPrivate,
-        subject: subject,
-      })
-      .eq("id", set.id)
-      .select();
+  async function update(e: React.FormEvent) {
+    e.preventDefault();
+    setIsUpdating(true);
+    try {
+      const response = await fetch(`/api/sets/${set.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          description,
+          isPrivate,
+          subject,
+        }),
+      });
 
-    if (!data || error) {
-      console.log(error);
-      return;
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error updating set:", errorData);
+        return;
+      }
+
+      const data = await response.json();
+      const updatedSet: FlashcardSet = data;
+      setSetInfo(updatedSet);
+      setIsUpdating(false);
+    } catch (error) {
+      console.error("Failed to update set:", error);
     }
-
-    const updatedSet: FlashcardSet = data[0];
-    setSetInfo(updatedSet);
   }
 
   return (

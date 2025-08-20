@@ -1,12 +1,10 @@
-import { getCardsBySet } from "@/app/controllers/flashcards/flashcards_controller";
+import { createCard } from "@/app/controllers/flashcards/flashcards_controller";
 import { NextResponse } from "next/server";
 
-export async function GET(
-  req: Request,
-  { params }: { params: { setId: string } }
-) {
+export async function POST(req: Request) {
   try {
-    const { data, error } = await getCardsBySet(params.setId);
+    const body = await req.json();
+    const { data, error } = await createCard(body);
     if (error)
       return NextResponse.json({ error: error.message }, { status: 500 });
 
