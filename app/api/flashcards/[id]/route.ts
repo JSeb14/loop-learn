@@ -1,30 +1,21 @@
-import { createClient } from "@/lib/supabase/server";
+import { deleteCard, getCardsBySet, updateCard } from "@/app/controllers/flashcards/flashcards_controller";
+import { Flashcard } from "@/app/util/flashcardStore";
 import { NextResponse } from "next/server";
-import { deleteSet, updateSet } from "@/app/controllers/sets/sets_controller";
-import { FlashcardSet } from "@/app/util/flashcardStore";
 
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  const supabase = await createClient();
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
+  try {
+    // Get flashcards by id (note id here refers to set ID)
+    const { data, error } = await getCardsBySet(params.id);
+    if (error)
+      return NextResponse.json({ error: error.message }, { status: 500 });
 
-  if (!sessionData || sessionError) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(data);
+  } catch (error) {
+    return NextResponse.json({ error: error }, { status: 401 });
   }
-
-  const { data, error } = await supabase
-    .from("flashcard_set")
-    .select("*")
-    .eq("id", params.id)
-    .single();
-
-  if (error)
-    return NextResponse.json({ error: error.message }, { status: 500 });
-
-  return NextResponse.json(data);
 }
 
 export async function PUT(
@@ -32,11 +23,11 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const id = (await params).id;
+    const id = params.id;
 
-    const updates: Partial<FlashcardSet> = await req.json();
+    const updates: Partial<Flashcard> = await req.json();
 
-    const { data, error } = await updateSet(id, updates);
+    const { data, error } = await updateCard(id, updates);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -61,7 +52,7 @@ export async function DELETE(
   try {
     const id = params.id;
 
-    const { error } = await deleteSet(id);
+    const { error } = await deleteCard(id);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

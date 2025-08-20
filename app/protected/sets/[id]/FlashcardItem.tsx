@@ -1,7 +1,6 @@
 "use client";
 
 import { Flashcard, useFlashcardStore } from "@/app/util/flashcardStore";
-import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import Image from "next/image";
 import edit_icon2 from "@/app/assets/edit_icon.svg";
@@ -19,41 +18,49 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
   const [isEditing, setIsEditing] = useState(false);
 
   async function updateCard() {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from("flashcard")
-      .update({
-        front: front,
-        back: back,
-      })
-      .eq("id", card.id)
-      .select();
+    setIsEditing(true);
+    try {
+      const response = await fetch(`/api/flashcards/${card.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          front,
+          back,
+        }),
+      });
 
-    if (!data || error) {
-      console.log(error);
-      return;
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error updating set:", errorData);
+        return;
+      }
+
+      const data = await response.json();
+      const updatedCard: Flashcard = data;
+      const cardSet = flashcards.filter((card) => card.id !== updatedCard.id);
+      setFlashcards([...cardSet, updatedCard]);
+    } catch (error) {
+      console.error("Failed to update set:", error);
     }
 
-    const updatedCard: Flashcard = data[0];
-    const cardSet = flashcards.filter((card) => card.id != updatedCard.id);
-    setFlashcards([...cardSet, updatedCard]);
     setIsEditing(false);
   }
 
   async function deleteCard() {
-    const supabase = await createClient();
-    const { error } = await supabase
-      .from("flashcard")
-      .delete()
-      .eq("id", card.id);
+    if (window.confirm("Are you sure you'd like to delete this flashcard?")) {
+      const response = await fetch(`/api/flashcards/${card.id}`, {
+        method: "DELETE",
+      });
 
-    if (!!error) {
-      console.log(error);
-      return;
+      if (!response.ok) {
+        alert("Failed to delete flashcard.");
+      } else {
+        const cardSet = flashcards.filter((c) => c.id !== card.id);
+        setFlashcards(cardSet);
+      }
     }
-
-    const cardSet = flashcards.filter((c) => c.id !== card.id);
-    setFlashcards(cardSet);
   }
 
   return (

@@ -1,7 +1,6 @@
 "use client";
 
 import { Flashcard, useFlashcardStore } from "@/app/util/flashcardStore";
-import { createClient } from "@/lib/supabase/client";
 import { Dispatch, SetStateAction, useState } from "react";
 import Image from "next/image";
 import check_icon from "@/app/assets/check_icon.svg";
@@ -20,19 +19,26 @@ export default function CreateCard({
   const [isLoading, setLoading] = useState(false);
 
   async function postCard() {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from("flashcard")
-      .insert([{ set_id: setId, front: front, back: back }])
-      .select();
+    const response = await fetch("/api/flashcards", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        set_id: setId,
+        front,
+        back,
+      }),
+    });
 
-    if (!data || error) {
-      console.log(error);
-      return;
+    if (response.ok) {
+      const data = await response.json();
+      const newCard: Flashcard = data;
+      setCardStore([...cardStore, newCard]);
+    } else {
+      const errorData = await response.json();
+      alert(`Error: ${errorData.error}`);
     }
-
-    const newCard: Flashcard = data[0];
-    setCardStore([...cardStore, newCard]);
     setLoading(false);
     setIsAdding(false);
   }

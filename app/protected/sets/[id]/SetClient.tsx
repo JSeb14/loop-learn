@@ -5,13 +5,17 @@ import {
   FlashcardSet,
   useFlashcardStore,
 } from "@/app/util/flashcardStore";
-import { ReactElement, useEffect, useState } from "react";
+import { Fragment, ReactElement, useEffect, useState } from "react";
 import UpdateSet from "./UpdateSetForm";
 import Image from "next/image";
 import edit_icon from "@/app/assets/edit_doc_icon.svg";
 import FlashcardItem from "./FlashcardItem";
-import CreateCard from "./CreateCard";
 import add_icon from "@/app/assets/add_icon.svg";
+import dynamic from "next/dynamic";
+
+const DynamicCreateCard = dynamic(() => import("./CreateCard"), {
+  ssr: false,
+});
 
 export default function SetClient({
   initialSet,
@@ -29,14 +33,24 @@ export default function SetClient({
     (state) => state.flashcards
   );
 
+  const [isMounted, setIsMounted] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
   const [isUpdatingSet, setIsUpdatingSet] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
-    const set: FlashcardSet = initialSet;
-    if (initialSet) setSetInfo(set);
-    setFlashcards(initialCards);
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (initialSet) setSetInfo(initialSet);
+    if (initialCards) setFlashcards(initialCards);
+    setIsHydrated(true);
   }, [initialSet, initialCards, setSetInfo, setFlashcards]);
+
+  if (!isMounted || !isHydrated) {
+    return <Fragment />;
+  }
 
   return (
     <div className="w-full flex flex-col gap-4 items-center">
@@ -63,7 +77,7 @@ export default function SetClient({
 
       <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-4" />
       <div className="w-full flex flex-col gap-4">
-        {flashcards.map((flashcard) => {
+        {flashcards?.map((flashcard) => {
           return (
             <FlashcardItem key={`flashcard-${flashcard.id}`} card={flashcard} />
           );
@@ -80,7 +94,9 @@ export default function SetClient({
             <Image src={add_icon} alt="Add new flashcard" />
           </div>
         </button>
-        {!!isAdding && <CreateCard setId={setId} setIsAdding={setIsAdding} />}
+        {!!isAdding && (
+          <DynamicCreateCard setId={setId} setIsAdding={setIsAdding} />
+        )}
       </>
     </div>
   );
