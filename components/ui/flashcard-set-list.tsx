@@ -7,7 +7,11 @@ import delete_icon from "@/app/assets/delete_icon.svg";
 import { FlashcardSet } from "@/app/util/flashcardStore";
 import add_icon from "@/app/assets/add_icon.svg";
 
-export default function FlashcardSetList({ sets }: { sets: FlashcardSet[] }) {
+export default function FlashcardSetList({
+  sets,
+}: {
+  sets: FlashcardSet[] | null;
+}) {
   async function deleteSet(setId: string) {
     if (window.confirm("Are you sure you'd like to delete this set?")) {
       const supabase = await createClient();
