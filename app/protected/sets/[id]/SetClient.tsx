@@ -18,8 +18,8 @@ export default function SetClient({
   initialCards,
   setId,
 }: {
-  initialSet: FlashcardSet;
-  initialCards: Flashcard[];
+  initialSet: FlashcardSet | null;
+  initialCards: Flashcard[] | null;
   setId: string;
 }): ReactElement {
   const setInfo = useFlashcardStore((state) => state.setInfo);
