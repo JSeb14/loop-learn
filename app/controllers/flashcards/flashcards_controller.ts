@@ -34,7 +34,15 @@ export const createCard = async (
 
   const { data, error } = await supabase
     .from("flashcard")
-    .insert([{ set_id: card.set_id, front: card.front, back: card.back }])
+    .insert([
+      {
+        set_id: card.set_id,
+        front: card.front,
+        front_image: card.front_image,
+        back: card.back,
+        back_image: card.back_image,
+      },
+    ])
     .select();
 
   return { data: data && data[0] ? (data[0] as Flashcard) : null, error };
