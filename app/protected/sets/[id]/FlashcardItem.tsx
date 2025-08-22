@@ -1,13 +1,13 @@
 "use client";
 
 import { Flashcard, useFlashcardStore } from "@/app/util/flashcardStore";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import edit_icon2 from "@/app/assets/edit_icon.svg";
 import check_icon from "@/app/assets/check_icon.svg";
 import delete_icon from "@/app/assets/delete_icon.svg";
 import { createClient } from "@/lib/supabase/client";
-import { deleteImage } from "@/app/controllers/images/image_controller";
+import { uploadImages } from "@/app/util/upload";
 
 export default function FlashcardItem({ card }: { card: Flashcard }) {
   const setFlashcards = useFlashcardStore((state) => state.setFlashcards);
@@ -17,6 +17,10 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
 
   const [front, setFront] = useState(card.front);
   const [back, setBack] = useState(card.back);
+  const [frontImage, setFrontImage] = useState<File | null>(null);
+  const [isNewFrontImage, setIsNewFrontImage] = useState(false);
+  const [isNewBackImage, setIsNewBackImage] = useState(false);
+  const [backImage, setBackImage] = useState<File | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [frontImageUrl, setFrontImageUrl] = useState<string | null>(null);
   const [backImageUrl, setBackImageUrl] = useState<string | null>(null);
@@ -24,25 +28,69 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
   useEffect(() => {
     async function fetchSignedUrl() {
       if (card.front_image) {
-        const supabase = createClient();
-        const { data, error } = await supabase.storage
-          .from("flashcards")
-          .createSignedUrl(card.front_image, 60 * 60 * 2);
-        if (data?.signedUrl) setFrontImageUrl(data.signedUrl);
+        const response = await fetch("/api/signed_url", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ path: card.front_image }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data?.signedUrl) setFrontImageUrl(data.signedUrl);
+        }
       }
       if (card.back_image) {
-        const supabase = createClient();
-        const { data, error } = await supabase.storage
-          .from("flashcards")
-          .createSignedUrl(card.back_image, 60 * 60 * 2);
-        if (data?.signedUrl) setBackImageUrl(data.signedUrl);
+        const response = await fetch("/api/signed_url", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ path: card.back_image }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data?.signedUrl) setBackImageUrl(data.signedUrl);
+        }
       }
     }
     fetchSignedUrl();
   }, [card.front_image, card.back_image]);
 
+  async function deleteImages(paths: (string | null)[]) {
+    if (paths.length > 0) {
+      try {
+        const imgResponse = await fetch("/api/images", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ paths }),
+        });
+        if (!imgResponse.ok) {
+          console.error("Error deleting images");
+        }
+      } catch (err) {
+        console.error("Error deleting images", err);
+      }
+    }
+  }
+
   async function updateCard() {
-    setIsEditing(true);
+    const paths = [];
+    if (isNewFrontImage) paths.push(card.front_image);
+    if (isNewBackImage) paths.push(card.back_image);
+
+    // First delete old images if necessary
+    deleteImages(paths);
+
+    // Now upload new images
+    const { frontUrl, backUrl } = await uploadImages(
+      frontImage,
+      backImage,
+      card.set_id
+    );
+
     try {
       const response = await fetch(`/api/flashcards/${card.id}`, {
         method: "PUT",
@@ -52,6 +100,8 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
         body: JSON.stringify({
           front,
           back,
+          front_image: frontUrl,
+          back_image: backUrl,
         }),
       });
 
@@ -73,32 +123,27 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
   }
 
   async function deleteCard() {
-    if (window.confirm("Are you sure you'd like to delete this flashcard?")) {
-      const response = await fetch(`/api/flashcards/${card.id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        alert("Failed to delete flashcard.");
-      } else {
-        if (card.front_image || card.back_image) {
-          const response = await fetch("/api/images", {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          body: JSON.stringify({
-            paths: [card.front_image, card.back_image].filter(Boolean),
-          }),
-        });
-        if (!response.ok) {
-          console.error("Error deleting images");
-        }
-
-        const cardSet = flashcards.filter((c) => c.id !== card.id);
-        setFlashcards(cardSet);
-      }
+    if (!window.confirm("Are you sure you'd like to delete this flashcard?")) {
+      return;
     }
+
+    // First, delete the flashcard from the database
+    const response = await fetch(`/api/flashcards/${card.id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      alert("Failed to delete flashcard.");
+      return;
+    }
+
+    // If the flashcard had images, attempt to delete them
+    const paths = [card.front_image, card.back_image].filter(Boolean);
+    deleteImages(paths);
+
+    // Update local state after successful flashcard deletion
+    const cardSet = flashcards.filter((c) => c.id !== card.id);
+    setFlashcards(cardSet);
   }
 
   return (
@@ -110,7 +155,7 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
               {card?.front}
               {frontImageUrl && (
                 <Image
-                  src={frontImageUrl}
+                  src={frontImageUrl as string}
                   alt={card?.front}
                   width={250}
                   height={250}
@@ -122,7 +167,7 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
               {card?.back}
               {backImageUrl && (
                 <Image
-                  src={backImageUrl}
+                  src={backImageUrl as string}
                   alt={card?.back}
                   width={250}
                   height={250}
@@ -155,48 +200,92 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
           </div>
         </div>
       ) : (
-        <>
-          <div className="bg-[#1E1E1E] rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-200 text-center w-full">
-            <div className="flex flex-col gap-1 bg-[#1E1E1E] rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-200">
-              <label htmlFor="front">Card Front</label>
-              <input
-                value={front}
-                type="text"
-                placeholder="Card front..."
-                onChange={(e) => {
-                  setFront(e.target.value);
-                }}
+        <div className="bg-[#1E1E1E] rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-200 text-center w-full">
+          <div className="flex flex-col gap-1 bg-[#1E1E1E] rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-200">
+            <label htmlFor="front">Card Front</label>
+            <input
+              value={front}
+              type="text"
+              placeholder="Card front..."
+              onChange={(e) => {
+                setFront(e.target.value);
+              }}
+            />
+            <label htmlFor="frontImage">Attach an image</label>
+            <input
+              type="file"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  setFrontImage(e.target.files[0]);
+                  setIsNewFrontImage(true);
+                }
+              }}
+            />
+            {(frontImage || typeof frontImageUrl === "string") && (
+              <Image
+                src={
+                  frontImage
+                    ? URL.createObjectURL(frontImage)
+                    : (frontImageUrl as string)
+                }
+                alt={card?.front}
+                width={250}
+                height={250}
+                className="mx-auto mt-2"
               />
-            </div>
-            <div className="flex flex-col text-gray-400 mt-2 gap-1">
-              <label htmlFor="back">Card Back</label>
-              <input
-                value={back}
-                type="text"
-                placeholder="Card back..."
-                onChange={(e) => {
-                  setBack(e.target.value);
-                }}
-              />
-            </div>
-
-            <div className="flex flex-row justify-evenly mt-5">
-              <button onClick={updateCard}>
-                <div className="flex flex-row gap-2">
-                  <p>Confirm</p>
-                  <Image src={check_icon} alt="Create card" />
-                </div>
-              </button>
-              <button
-                onClick={() => {
-                  setIsEditing(false);
-                }}
-              >
-                Cancel
-              </button>
-            </div>
+            )}
           </div>
-        </>
+          <div className="flex flex-col text-gray-400 mt-2 gap-1">
+            <label htmlFor="back">Card Back</label>
+            <input
+              value={back}
+              type="text"
+              placeholder="Card back..."
+              onChange={(e) => {
+                setBack(e.target.value);
+              }}
+            />
+            <label htmlFor="backImage">Attach an image</label>
+            <input
+              type="file"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  setBackImage(e.target.files[0]);
+                  setIsNewBackImage(true);
+                }
+              }}
+            />
+            {(backImage || typeof backImageUrl === "string") && (
+              <Image
+                src={
+                  backImage
+                    ? URL.createObjectURL(backImage)
+                    : (backImageUrl as string)
+                }
+                alt={card?.back}
+                width={250}
+                height={250}
+                className="mx-auto mt-2"
+              />
+            )}
+          </div>
+
+          <div className="flex flex-row justify-evenly mt-5">
+            <button onClick={updateCard}>
+              <div className="flex flex-row gap-2">
+                <p>Confirm</p>
+                <Image src={check_icon} alt="Create card" />
+              </div>
+            </button>
+            <button
+              onClick={() => {
+                setIsEditing(false);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       )}
     </>
   );

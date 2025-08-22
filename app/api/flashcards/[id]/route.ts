@@ -23,7 +23,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const id = params.id;
+    const id = (await params).id;
 
     const updates: Partial<Flashcard> = await req.json();
 
@@ -50,7 +50,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const id = params.id;
+    const id = (await params).id;
 
     const { error } = await deleteCard(id);
 

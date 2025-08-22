@@ -65,6 +65,8 @@ export const updateCard = async (
     .update({
       front: updates.front,
       back: updates.back,
+      front_image: updates.front_image,
+      back_image: updates.back_image,
     })
     .eq("id", id)
     .select();
