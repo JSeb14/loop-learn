@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import Image from "next/image";
 import check_icon from "@/app/assets/check_icon.svg";
 import { createClient } from "@/lib/supabase/client";
+import { uploadImages } from "@/app/util/upload";
 
 export default function CreateCard({
   setId,
@@ -21,46 +22,9 @@ export default function CreateCard({
   const setCardStore = useFlashcardStore((s) => s.setFlashcards);
   const [isLoading, setLoading] = useState(false);
 
-  async function uploadImages() {
-    let frontUrl = null;
-    let backUrl = null;
-
-    if (frontImage) {
-      const formData = new FormData();
-      formData.append("file", frontImage);
-      formData.append("path", `set-${setId}/front/${frontImage.name}`);
-      const response = await fetch("/api/images", {
-        method: "POST",
-        body: formData,
-      });
-      if (!response.ok) {
-        console.error("Error uploading front image");
-      } else {
-        frontUrl = `set-${setId}/front/${frontImage.name}`;
-      }
-    }
-
-    if (backImage) {
-      const formData = new FormData();
-      formData.append("file", backImage);
-      formData.append("path", `set-${setId}/back/${backImage.name}`);
-      const response = await fetch("/api/images", {
-        method: "POST",
-        body: formData,
-      });
-      if (!response.ok) {
-        console.error("Error uploading back image");
-      } else {
-        backUrl = `set-${setId}/back/${backImage.name}`;
-      }
-    }
-
-    return { frontUrl, backUrl };
-  }
-
   async function postCard() {
     setLoading(true);
-    const { frontUrl, backUrl } = await uploadImages();
+    const { frontUrl, backUrl } = await uploadImages(frontImage, backImage, setId);
 
     const body = {
       set_id: setId,

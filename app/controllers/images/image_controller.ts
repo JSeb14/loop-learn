@@ -8,7 +8,6 @@ export const uploadImage = async (
   const supabase = await createClient();
   const { data: sessionData, error: sessionError } =
     await supabase.auth.getSession();
-  console.log(sessionData);
 
   if (!sessionData || sessionError) {
     throw new Error("Invalid session.");
@@ -32,9 +31,9 @@ export const deleteImage = async (
     throw new Error("Invalid session.");
   }
 
-  console.log(paths);
-
   const { error } = await supabase.storage.from("flashcards").remove(paths);
-
+  if (error) {
+    console.error("Supabase delete error:", error);
+  }
   return { error };
 };

@@ -6,15 +6,20 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const formData = await req.formData();
+    const file = formData.get("file") as File;
+    const path = formData.get("path") as string;
 
-    const { error } = await uploadImage(body.file, body.path);
+    const { error } = await uploadImage(file, path);
     if (error)
       return NextResponse.json({ error: error.message }, { status: 500 });
 
     return NextResponse.json({ message: "Image uploaded successfully" });
   } catch (error) {
-    return NextResponse.json({ error: error }, { status: 401 });
+    return NextResponse.json(
+      { error: error },
+      { status: 401 }
+    );
   }
 }
 
