@@ -1,19 +1,17 @@
 "use client";
 
-import { Flashcard, useFlashcardStore } from "@/app/util/flashcardStore";
+import Flashcard from "@/lib/types/Flashcard";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import edit_icon2 from "@/app/assets/edit_icon.svg";
-import check_icon from "@/app/assets/check_icon.svg";
-import delete_icon from "@/app/assets/delete_icon.svg";
-import { createClient } from "@/lib/supabase/client";
+import edit_icon2 from "@/app/assets/icons/edit_icon.svg";
+import check_icon from "@/app/assets/icons/check_icon.svg";
+import delete_icon from "@/app/assets/icons/delete_icon.svg";
 import { uploadImages } from "@/app/util/upload";
+import { useFlashcards } from "@/lib/hooks/UseFlashcards";
 
 export default function FlashcardItem({ card }: { card: Flashcard }) {
-  const setFlashcards = useFlashcardStore((state) => state.setFlashcards);
-  const flashcards: Flashcard[] = useFlashcardStore(
-    (state) => state.flashcards
-  );
+
+  const {flashcards, setFlashcards} = useFlashcards();
 
   const [front, setFront] = useState(card.front);
   const [back, setBack] = useState(card.back);

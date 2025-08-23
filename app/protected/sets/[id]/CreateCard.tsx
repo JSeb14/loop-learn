@@ -1,11 +1,11 @@
 "use client";
 
-import { Flashcard, useFlashcardStore } from "@/app/util/flashcardStore";
+import Flashcard from "@/lib/types/Flashcard";
 import { Dispatch, SetStateAction, useState } from "react";
 import Image from "next/image";
-import check_icon from "@/app/assets/check_icon.svg";
-import { createClient } from "@/lib/supabase/client";
+import check_icon from "@/app/assets/icons/check_icon.svg";
 import { uploadImages } from "@/app/util/upload";
+import { useFlashcards } from "@/lib/hooks/UseFlashcards";
 
 export default function CreateCard({
   setId,
@@ -18,13 +18,17 @@ export default function CreateCard({
   const [back, setBack] = useState("");
   const [frontImage, setFrontImage] = useState<File | null>(null);
   const [backImage, setBackImage] = useState<File | null>(null);
-  const cardStore = useFlashcardStore((s) => s.flashcards);
-  const setCardStore = useFlashcardStore((s) => s.setFlashcards);
   const [isLoading, setLoading] = useState(false);
+
+  const { flashcards, setFlashcards } = useFlashcards();
 
   async function postCard() {
     setLoading(true);
-    const { frontUrl, backUrl } = await uploadImages(frontImage, backImage, setId);
+    const { frontUrl, backUrl } = await uploadImages(
+      frontImage,
+      backImage,
+      setId
+    );
 
     const body = {
       set_id: setId,
@@ -45,7 +49,7 @@ export default function CreateCard({
     if (response.ok) {
       const data = await response.json();
       const newCard: Flashcard = data;
-      setCardStore([...cardStore, newCard]);
+      setFlashcards([...flashcards, newCard]);
     } else {
       const errorData = await response.json();
       alert(`Error: ${errorData.error}`);

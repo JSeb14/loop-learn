@@ -1,22 +1,28 @@
 "use client";
 
-import { FlashcardSet, useFlashcardStore } from "@/app/util/flashcardStore";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useCurrentSet } from "@/lib/hooks/UseCurrentSet";
+import FlashcardSet from "@/lib/types/FlashcardSet";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 export default function UpdateSet({
   set,
+  setId,
   setIsUpdating,
 }: {
-  set: FlashcardSet;
+  set: FlashcardSet | null;
+  setId: string;
   setIsUpdating: Dispatch<SetStateAction<boolean>>;
 }) {
-  const [name, setName] = useState(set?.name);
-  const [description, setDescription] = useState(set?.description);
-  const [isPrivate, setIsPrivate] = useState(true);
-  const [subject, setSubject] = useState(set?.subject);
-  //const [coverImage, setCoverImage] = useState(null);
+  const { currentSet, setCurrentSet, getSet } = useCurrentSet();
 
-  const setSetInfo = useFlashcardStore((s) => s.setSetInfo);
+  useEffect(() => {
+    if (!set) getSet(setId);
+  }, [set, getSet, setId]);
+
+  const [name, setName] = useState(currentSet?.name);
+  const [description, setDescription] = useState(currentSet?.description);
+  const [isPrivate, setIsPrivate] = useState(currentSet?.isPrivate);
+  const [subject, setSubject] = useState(currentSet?.subject);
 
   const subjects = [
     "Anatomy",
@@ -57,7 +63,7 @@ export default function UpdateSet({
 
       const data = await response.json();
       const updatedSet: FlashcardSet = data;
-      setSetInfo(updatedSet);
+      setCurrentSet(updatedSet);
       setIsUpdating(false);
     } catch (error) {
       console.error("Failed to update set:", error);

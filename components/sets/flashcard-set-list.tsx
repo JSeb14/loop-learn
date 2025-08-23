@@ -2,17 +2,23 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import delete_icon from "@/app/assets/delete_icon.svg";
-import { FlashcardSet } from "@/app/util/flashcardStore";
-import add_icon from "@/app/assets/add_icon.svg";
-import { useState } from "react";
+import delete_icon from "@/app/assets/icons/delete_icon.svg";
+import FlashcardSet from "@/lib/types/FlashcardSet";
+import add_icon from "@/app/assets/icons/add_icon.svg";
+import { useEffect } from "react";
+import { useSets } from "@/lib/hooks/UseSets";
 
 export default function FlashcardSetList({
   initialSets,
 }: {
   initialSets: FlashcardSet[] | null;
 }) {
-  const [sets, setSets] = useState(initialSets);
+  const { sets, setSets, loadSets } = useSets();
+
+  useEffect(() => {
+    if (initialSets) setSets(initialSets);
+    else loadSets();
+  }, [loadSets, initialSets, setSets]);
 
   async function deleteSet(setId: string) {
     if (window.confirm("Are you sure you'd like to delete this set?")) {
