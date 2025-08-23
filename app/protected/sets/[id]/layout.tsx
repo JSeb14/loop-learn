@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import back_icon from "@/app/assets/back_icon.svg";
 import Image from "next/image";
-import stack_icon from "@/app/assets/stack_icon.svg";
-import quiz_icon from "@/app/assets/quiz_icon.svg";
-import manage_icon from "@/app/assets/quiz_icon.svg";
+import back_icon from "@/app/assets/icons/back_icon.svg";
+import stack_icon from "@/app/assets/icons/stack_icon.svg";
+import quiz_icon from "@/app/assets/icons/quiz_icon.svg";
+import manage_icon from "@/app/assets/icons/quiz_icon.svg";
 import { useParams, usePathname } from "next/navigation";
 
 export default function SetLayout({ children }: { children: React.ReactNode }) {

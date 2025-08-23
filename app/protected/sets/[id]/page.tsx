@@ -25,7 +25,5 @@ export default async function Set({ params }: { params: { id: string } }) {
     return <Fragment />;
   }
 
-  console.log(flashcards);
-
   return <SetClient initialSet={set} initialCards={flashcards} setId={setId} />;
 }

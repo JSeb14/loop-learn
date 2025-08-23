@@ -1,4 +1,4 @@
-import { Flashcard } from "@/app/util/flashcardStore";
+import Flashcard from "@/lib/types/Flashcard";
 import { createClient } from "@/lib/supabase/server";
 import { PostgrestError } from "@supabase/supabase-js";
 

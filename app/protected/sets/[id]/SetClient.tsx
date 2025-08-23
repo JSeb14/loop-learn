@@ -1,17 +1,16 @@
 "use client";
 
-import {
-  Flashcard,
-  FlashcardSet,
-  useFlashcardStore,
-} from "@/app/util/flashcardStore";
+import Flashcard from "@/lib/types/Flashcard";
+import FlashcardSet from "@/lib/types/FlashcardSet";
 import { Fragment, ReactElement, useEffect, useState } from "react";
 import UpdateSet from "./UpdateSetForm";
 import Image from "next/image";
-import edit_icon from "@/app/assets/edit_doc_icon.svg";
+import edit_icon from "@/app/assets/icons/edit_doc_icon.svg";
 import FlashcardItem from "./FlashcardItem";
-import add_icon from "@/app/assets/add_icon.svg";
+import add_icon from "@/app/assets/icons/add_icon.svg";
 import dynamic from "next/dynamic";
+import { useCurrentSet } from "@/lib/hooks/UseCurrentSet";
+import { useFlashcards } from "@/lib/hooks/UseFlashcards";
 
 const DynamicCreateCard = dynamic(() => import("./CreateCard"), {
   ssr: false,
@@ -26,12 +25,8 @@ export default function SetClient({
   initialCards: Flashcard[] | null;
   setId: string;
 }): ReactElement {
-  const setInfo = useFlashcardStore((state) => state.setInfo);
-  const setSetInfo = useFlashcardStore((state) => state.setSetInfo);
-  const setFlashcards = useFlashcardStore((state) => state.setFlashcards);
-  const flashcards: Flashcard[] = useFlashcardStore(
-    (state) => state.flashcards
-  );
+  const { currentSet, setCurrentSet, getSet } = useCurrentSet();
+  const { flashcards, setFlashcards, getFlashcards } = useFlashcards();
 
   const [isMounted, setIsMounted] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
@@ -43,10 +38,20 @@ export default function SetClient({
   }, []);
 
   useEffect(() => {
-    if (initialSet) setSetInfo(initialSet);
+    if (initialSet) setCurrentSet(initialSet);
+    else getSet(setId);
     if (initialCards) setFlashcards(initialCards);
+    else getFlashcards(setId);
     setIsHydrated(true);
-  }, [initialSet, initialCards, setSetInfo, setFlashcards]);
+  }, [
+    initialSet,
+    initialCards,
+    setCurrentSet,
+    setFlashcards,
+    getSet,
+    setId,
+    getFlashcards,
+  ]);
 
   if (!isMounted || !isHydrated) {
     return <Fragment />;
@@ -57,9 +62,9 @@ export default function SetClient({
       <>
         {!isUpdatingSet ? (
           <>
-            <h1>{setInfo?.name}</h1>
-            <h2>{setInfo?.description}</h2>
-            <h3>{setInfo?.subject}</h3>
+            <h1>{currentSet?.name}</h1>
+            <h2>{currentSet?.description}</h2>
+            <h3>{currentSet?.subject}</h3>
             <button
               className="flex flex-row gap-2 border-2 border-solid p-2"
               onClick={() => {
@@ -71,7 +76,7 @@ export default function SetClient({
             </button>
           </>
         ) : (
-          <UpdateSet set={setInfo} setIsUpdating={setIsUpdatingSet} />
+          <UpdateSet set={currentSet} setIsUpdating={setIsUpdatingSet} />
         )}
       </>
 
