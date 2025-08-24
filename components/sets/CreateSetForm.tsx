@@ -2,17 +2,31 @@
 
 import { createSet } from "@/lib/services/sets/setService";
 import { useRouter } from "next/navigation";
-import { ReactElement, useState } from "react";
+import { ReactElement } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SetFormValues, setSchema } from "@/lib/schemas/setSchema";
 
-export const CreateSetForm = (): ReactElement => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [isPrivate, setIsPrivate] = useState(true);
-  const [subject, setSubject] = useState("Anatomy");
+const CreateSetForm = (): ReactElement => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SetFormValues>({
+    resolver: zodResolver(setSchema),
+    mode: "all",
+    defaultValues: {
+      name: "",
+      description: "",
+      isPrivate: true,
+      subject: "Select a Subject",
+    },
+  });
 
   const router = useRouter();
 
   const subjects = [
+    "Select a Subject",
     "Anatomy",
     "Biology",
     "Chemistry",
@@ -26,8 +40,19 @@ export const CreateSetForm = (): ReactElement => {
     "Technology",
   ];
 
+  const onSubmit = (data: SetFormValues) => {
+    createSet(router, {
+      ...data,
+      description: !data.description ? null : data.description,
+      subject:
+        !data.subject || data.subject === "Select a Subject"
+          ? null
+          : data.subject,
+    });
+  };
+
   return (
-    <form>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="w-max mt-5 flex flex-col gap-7">
         <div>
           <label
@@ -40,13 +65,12 @@ export const CreateSetForm = (): ReactElement => {
             placeholder="Set name"
             type="text"
             id="name"
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-            }}
+            {...register("name")}
             className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
-            required
           />
+          {errors.name && (
+            <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
+          )}
         </div>
 
         <div>
@@ -60,13 +84,14 @@ export const CreateSetForm = (): ReactElement => {
             placeholder="Set description"
             type="text"
             id="description"
-            value={description}
-            onChange={(e) => {
-              setDescription(e.target.value);
-            }}
+            {...register("description")}
             className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
-            required
           />
+          {errors.description && (
+            <p className="mt-1 text-xs text-red-500">
+              {errors.description.message}
+            </p>
+          )}
         </div>
 
         <div>
@@ -77,12 +102,8 @@ export const CreateSetForm = (): ReactElement => {
             Select a Subject for this Set
           </label>
           <select
-            name="subject"
-            value={subject}
             className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
-            onChange={(e) => {
-              setSubject(e.target.value);
-            }}
+            {...register("subject")}
           >
             {subjects.map((subjectOption, index) => {
               return (
@@ -92,6 +113,11 @@ export const CreateSetForm = (): ReactElement => {
               );
             })}
           </select>
+          {errors.subject && (
+            <p className="mt-1 text-xs text-red-500">
+              {errors.subject.message}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-row gap-2 items-center">
@@ -104,24 +130,19 @@ export const CreateSetForm = (): ReactElement => {
           <input
             type="checkbox"
             id="isPrivate"
-            checked={isPrivate}
-            onChange={() => {
-              setIsPrivate(!isPrivate);
-            }}
+            {...register("isPrivate")}
             className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
           />
+          {errors.isPrivate && (
+            <p className="mt-1 text-xs text-red-500">
+              {errors.isPrivate.message}
+            </p>
+          )}
         </div>
         <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-3" />
 
         <button
-          onClick={() => {
-            createSet(router, {
-              name,
-              description,
-              isPrivate,
-              subject,
-            });
-          }}
+          type="submit"
           className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
         >
           Create New Set
