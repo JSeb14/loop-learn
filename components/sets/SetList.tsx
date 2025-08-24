@@ -7,6 +7,7 @@ import FlashcardSet from "@/lib/types/FlashcardSet";
 import add_icon from "@/app/assets/icons/add_icon.svg";
 import { useEffect } from "react";
 import { useSets } from "@/lib/hooks/useSets";
+import { deleteSet } from "@/lib/services/sets/setService";
 
 export default function FlashcardSetList({
   initialSets,
@@ -19,23 +20,6 @@ export default function FlashcardSetList({
     if (initialSets) setSets(initialSets);
     else loadSets();
   }, [loadSets, initialSets, setSets]);
-
-  async function deleteSet(setId: string) {
-    if (window.confirm("Are you sure you'd like to delete this set?")) {
-      const response = await fetch(`/api/sets/${setId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        alert("Failed to delete set.");
-      } else {
-        if (sets) {
-          const updatedSets = sets.filter((set) => set.id !== setId);
-          setSets(updatedSets);
-        }
-      }
-    }
-  }
 
   return (
     <div className="w-full flex flex-col items-center">
@@ -59,7 +43,22 @@ export default function FlashcardSetList({
                 </Link>
                 <button
                   onClick={() => {
-                    deleteSet(set.id);
+                    if (
+                      window.confirm(
+                        "Are you sure you'd like to delete this set?"
+                      )
+                    ) {
+                      deleteSet(set.id).then((response) => {
+                        if (response.ok) {
+                          const updatedSets = sets.filter(
+                            (s) => s.id !== set.id
+                          );
+                          setSets(updatedSets);
+                        } else {
+                          alert("Failed to delete set.");
+                        }
+                      });
+                    }
                   }}
                 >
                   <Image src={delete_icon} alt="Delete set" />
