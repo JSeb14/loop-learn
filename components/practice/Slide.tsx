@@ -1,8 +1,9 @@
 "use client";
 
 import Flashcard from "@/lib/types/Flashcard";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
+import { useSignedUrl } from "@/lib/hooks/useSignedUrl";
 
 export default function Slide({
   flashcard,
@@ -12,40 +13,8 @@ export default function Slide({
   startFront: boolean;
 }) {
   const [side, setSide] = useState<boolean>(startFront);
-  const [frontImageUrl, setFrontImageUrl] = useState<string | null>(null);
-  const [backImageUrl, setBackImageUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchSignedUrl() {
-      if (flashcard.front_image) {
-        const response = await fetch("/api/signed_url", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ path: flashcard.front_image }),
-        });
-        if (response.ok) {
-          const data = await response.json();
-          if (data?.signedUrl) setFrontImageUrl(data.signedUrl);
-        }
-      }
-      if (flashcard.back_image) {
-        const response = await fetch("/api/signed_url", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ path: flashcard.back_image }),
-        });
-        if (response.ok) {
-          const data = await response.json();
-          if (data?.signedUrl) setBackImageUrl(data.signedUrl);
-        }
-      }
-    }
-    fetchSignedUrl();
-  }, [flashcard.front_image, flashcard.back_image]);
+  const { url: frontImageUrl } = useSignedUrl(flashcard.front_image || null);
+  const { url: backImageUrl } = useSignedUrl(flashcard.back_image || null);
 
   return (
     <div

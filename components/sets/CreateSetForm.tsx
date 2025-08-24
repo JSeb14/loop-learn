@@ -1,14 +1,16 @@
 "use client";
 
+import { createSet } from "@/lib/services/sets/setService";
+import { useRouter } from "next/navigation";
 import { ReactElement, useState } from "react";
-import { redirect } from "next/navigation";
 
 export const CreateSetForm = (): ReactElement => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isPrivate, setIsPrivate] = useState(true);
   const [subject, setSubject] = useState("Anatomy");
-  //const [coverImage, setCoverImage] = useState(null);
+
+  const router = useRouter();
 
   const subjects = [
     "Anatomy",
@@ -23,29 +25,6 @@ export const CreateSetForm = (): ReactElement => {
     "Social Studies",
     "Technology",
   ];
-
-  const onSubmit = async () => {
-    const response = await fetch("/api/sets", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        description,
-        isPrivate,
-        subject,
-      }),
-    });
-
-    if (response.ok) {
-      alert(`Your flashcard set was successfully created!`);
-      redirect("/protected/sets");
-    } else {
-      const errorData = await response.json();
-      alert(`Error: ${errorData.error}`);
-    }
-  };
 
   return (
     <form>
@@ -135,7 +114,14 @@ export const CreateSetForm = (): ReactElement => {
         <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-3" />
 
         <button
-          onClick={onSubmit}
+          onClick={() => {
+            createSet(router, {
+              name,
+              description,
+              isPrivate,
+              subject,
+            });
+          }}
           className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
         >
           Create New Set

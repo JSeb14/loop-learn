@@ -72,3 +72,40 @@ export async function uploadImages(
 
   return { frontUrl, backUrl };
 }
+
+export async function fetchSignedUrl(
+  cardFrontImage: string | null,
+  cardBackImage: string | null
+) {
+  let frontImageUrl: string | null = null;
+  let backImageUrl: string | null = null;
+
+  if (cardFrontImage) {
+    const response = await fetch("/api/signed_url", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ path: cardFrontImage }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      if (data?.signedUrl) frontImageUrl = data.signedUrl;
+    }
+  }
+  if (cardBackImage) {
+    const response = await fetch("/api/signed_url", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ path: cardBackImage }),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      if (data?.signedUrl) backImageUrl = data.signedUrl;
+    }
+  }
+
+  return { frontImageUrl, backImageUrl };
+}

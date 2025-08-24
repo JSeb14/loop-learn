@@ -1,7 +1,7 @@
 "use client";
 
 import Flashcard from "@/lib/types/Flashcard";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import edit_icon2 from "@/app/assets/icons/edit_icon.svg";
 import check_icon from "@/app/assets/icons/check_icon.svg";
@@ -11,6 +11,7 @@ import {
   deleteFlashcard,
   updateFlashcard,
 } from "@/lib/services/flashcards/flashcardService";
+import { useSignedUrl } from "@/lib/hooks/useSignedUrl";
 
 export default function FlashcardItem({ card }: { card: Flashcard }) {
   const { flashcards, setFlashcards } = useFlashcards();
@@ -22,40 +23,8 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
   const [isNewBackImage, setIsNewBackImage] = useState(false);
   const [backImage, setBackImage] = useState<File | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [frontImageUrl, setFrontImageUrl] = useState<string | null>(null);
-  const [backImageUrl, setBackImageUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchSignedUrl() {
-      if (card.front_image) {
-        const response = await fetch("/api/signed_url", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ path: card.front_image }),
-        });
-        if (response.ok) {
-          const data = await response.json();
-          if (data?.signedUrl) setFrontImageUrl(data.signedUrl);
-        }
-      }
-      if (card.back_image) {
-        const response = await fetch("/api/signed_url", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ path: card.back_image }),
-        });
-        if (response.ok) {
-          const data = await response.json();
-          if (data?.signedUrl) setBackImageUrl(data.signedUrl);
-        }
-      }
-    }
-    fetchSignedUrl();
-  }, [card.front_image, card.back_image]);
+  const { url: frontImageUrl } = useSignedUrl(card.front_image || null);
+  const { url: backImageUrl } = useSignedUrl(card.back_image || null);
 
   return (
     <>

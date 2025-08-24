@@ -21,7 +21,7 @@ export default function Practice() {
 
   useEffect(() => {
     if (!flashcards || flashcards.length === 0) getFlashcards(params.id);
-  }, [flashcards, getFlashcards, params.id]);
+  }, [flashcards, getFlashcards, settingUp, settingUp, params.id]);
 
   const incrementIndex = () => {
     if (index + 1 < flashcards.length) setIndex(index + 1);
@@ -30,7 +30,7 @@ export default function Practice() {
   const decrementIndex = () => {
     if (index > 0) setIndex(index - 1);
   };
-
+  
   return (
     <>
       {settingUp ? (
