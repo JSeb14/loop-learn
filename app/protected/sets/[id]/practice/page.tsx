@@ -1,24 +1,27 @@
 "use client";
 
-import { Flashcard, useFlashcardStore } from "@/app/util/flashcardStore";
-import { useState } from "react";
-import chevron_forward_icon from "@/app/assets/chevron_forward_icon.svg";
-import chevron_backward_icon from "@/app/assets/chevron_backward_icon.svg";
-import chevron_backward_disabled_icon from "@/app/assets/chevron_backward_disabled_icon.svg";
-import chevron_forward_disabled_icon from "@/app/assets/chevron_forward_disabled_icon.svg";
+import { useEffect, useState } from "react";
+import chevron_forward_icon from "@/app/assets/icons/chevron_forward_icon.svg";
+import chevron_backward_icon from "@/app/assets/icons/chevron_backward_icon.svg";
+import chevron_backward_disabled_icon from "@/app/assets/icons/chevron_backward_disabled_icon.svg";
+import chevron_forward_disabled_icon from "@/app/assets/icons/chevron_forward_disabled_icon.svg";
 import Image from "next/image";
-import StartingSideForm from "@/components/ui/StartingSideForm";
-import Slide from "@/components/Slide";
+import StartingSideForm from "@/components/practice/StartingSideForm";
+import Slide from "@/components/practice/Slide";
+import { useFlashcards } from "@/lib/hooks/useFlashcards";
+import { useParams } from "next/navigation";
 
 export default function Practice() {
-  const flashcards: Flashcard[] = useFlashcardStore(
-    (state) => state.flashcards
-  );
-
   const [startFront, setStartFront] = useState<boolean>(true);
   const [settingUp, setSettingUp] = useState<boolean>(true);
-
   const [index, setIndex] = useState(0);
+
+  const params = useParams<{ id: string }>();
+  const { flashcards, getFlashcards } = useFlashcards();
+
+  useEffect(() => {
+    if (!flashcards || flashcards.length === 0) getFlashcards(params.id);
+  }, [flashcards, getFlashcards, settingUp, settingUp, params.id]);
 
   const incrementIndex = () => {
     if (index + 1 < flashcards.length) setIndex(index + 1);
@@ -27,7 +30,7 @@ export default function Practice() {
   const decrementIndex = () => {
     if (index > 0) setIndex(index - 1);
   };
-
+  
   return (
     <>
       {settingUp ? (

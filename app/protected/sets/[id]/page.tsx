@@ -1,6 +1,6 @@
-import SetClient from "./SetClient";
-import { getCardsBySet } from "@/app/controllers/flashcards/flashcards_controller";
-import { getSetById } from "@/app/controllers/sets/sets_controller";
+import SetClient from "@/components/sets/SetClient";
+import { getCardsBySet } from "@/lib/controllers/flashcards/flashcardsController";
+import { getSetById } from "@/lib/controllers/sets/setsController";
 import { Fragment } from "react";
 
 export default async function Set({ params }: { params: { id: string } }) {
@@ -8,24 +8,18 @@ export default async function Set({ params }: { params: { id: string } }) {
 
   const { set, error: setError } = await getSetById(setId);
   if (!set || setError) {
-    console.log("Error loading set details");
+    console.error("Error loading set details");
     return <Fragment />;
   }
 
   const { data: flashcards, error: flashcardsError } = await getCardsBySet(
     setId
   );
-  if (flashcardsError) {
-    console.log("Error loading set details");
-    return <Fragment />;
-  }
 
   if (!flashcards || flashcardsError) {
-    console.log("No sets found");
+    console.error("No flashcards found");
     return <Fragment />;
   }
-
-  console.log(flashcards);
 
   return <SetClient initialSet={set} initialCards={flashcards} setId={setId} />;
 }

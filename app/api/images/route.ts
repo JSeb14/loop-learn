@@ -1,7 +1,7 @@
 import {
   deleteImage,
   uploadImage,
-} from "@/app/controllers/images/image_controller";
+} from "@/lib/controllers/images/imageController";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {

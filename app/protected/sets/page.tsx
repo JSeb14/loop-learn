@@ -1,5 +1,5 @@
-import { getAllSets } from "@/app/controllers/sets/sets_controller";
-import FlashcardSetList from "@/components/ui/flashcard-set-list";
+import { getAllSets } from "@/lib/controllers/sets/setsController";
+import FlashcardSetList from "@/components/sets/SetList";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
