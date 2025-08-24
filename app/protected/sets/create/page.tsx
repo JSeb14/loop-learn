@@ -1,4 +1,4 @@
-import CreateSetForm from "@/components/create-set-form";
+import CreateSetForm from "@/components/sets/CreateSetForm";
 
 export default async function CreateSet() {
   return (

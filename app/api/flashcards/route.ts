@@ -1,4 +1,4 @@
-import { createCard } from "@/app/controllers/flashcards/flashcards_controller";
+import { createCard } from "@/lib/controllers/flashcards/flashcardsController";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {

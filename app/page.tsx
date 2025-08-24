@@ -1,5 +1,5 @@
-import { AuthButton } from "@/components/auth-button";
-import logo from "@/app/logo.png";
+import { AuthButton } from "@/components/auth/auth-button";
+import logo from "@/app/assets/logo.png";
 import Image from "next/image";
 
 export default function Home() {
