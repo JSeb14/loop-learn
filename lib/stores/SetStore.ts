@@ -11,10 +11,10 @@ export type SetStoreActions = {
 
 export type SetStore = SetStoreState & SetStoreActions;
 
-const UseSetStore = create<SetStore>((set) => ({
+const useSetStore = create<SetStore>((set) => ({
   sets: [],
 
   setSets: (data: FlashcardSet[]) => set({ sets: data }),
 }));
 
-export default UseSetStore;
+export default useSetStore;

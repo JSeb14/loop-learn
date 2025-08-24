@@ -1,4 +1,4 @@
-import { createSet, getAllSets } from "@/app/controllers/sets/sets_controller";
+import { createSet, getAllSets } from "@/lib/controllers/sets/setsController";
 import { NextResponse } from "next/server";
 
 export async function GET() {

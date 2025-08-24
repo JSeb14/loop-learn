@@ -1,4 +1,4 @@
-import { createSignedUrl } from "@/app/controllers/signed_url/signed_url_controller";
+import { createSignedUrl } from "@/lib/controllers/signed_url/signedUrlController";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -6,9 +6,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { path } = body;
 
-    console.log("Path ", path);
     const { data, error } = await createSignedUrl(path);
-    console.log(data);
 
     if (error)
       return NextResponse.json({ error: error.message }, { status: 500 });

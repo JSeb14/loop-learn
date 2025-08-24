@@ -1,8 +1,8 @@
 import { useCallback } from "react";
-import UseFlashcardStore from "../stores/FlashcardStore";
+import useFlashcardStore from "../stores/flashcardStore";
 
 export function useFlashcards() {
-  const { flashcards, setFlashcards } = UseFlashcardStore();
+  const { flashcards, setFlashcards } = useFlashcardStore();
 
   const getFlashcards = useCallback(
     async (setId: string) => {

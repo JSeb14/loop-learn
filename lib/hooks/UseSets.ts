@@ -1,8 +1,8 @@
 import { useCallback } from "react";
-import UseSetStore from "../stores/SetStore";
+import useSetStore from "../stores/setStore";
 
 export function useSets() {
-  const { sets, setSets } = UseSetStore();
+  const { sets, setSets } = useSetStore();
 
   const loadSets = useCallback(async () => {
     try {

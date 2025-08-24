@@ -6,15 +6,18 @@ import { Fragment, ReactElement, useEffect, useState } from "react";
 import UpdateSet from "./UpdateSetForm";
 import Image from "next/image";
 import edit_icon from "@/app/assets/icons/edit_doc_icon.svg";
-import FlashcardItem from "./FlashcardItem";
+import FlashcardItem from "../flashcards/FlashcardItem";
 import add_icon from "@/app/assets/icons/add_icon.svg";
 import dynamic from "next/dynamic";
-import { useCurrentSet } from "@/lib/hooks/UseCurrentSet";
-import { useFlashcards } from "@/lib/hooks/UseFlashcards";
+import { useCurrentSet } from "@/lib/hooks/useCurrentSet";
+import { useFlashcards } from "@/lib/hooks/useFlashcards";
 
-const DynamicCreateCard = dynamic(() => import("./CreateCard"), {
-  ssr: false,
-});
+const DynamicCreateCard = dynamic(
+  () => import("@/components/flashcards/CreateCard"),
+  {
+    ssr: false,
+  }
+);
 
 export default function SetClient({
   initialSet,
@@ -76,7 +79,11 @@ export default function SetClient({
             </button>
           </>
         ) : (
-          <UpdateSet set={currentSet} setIsUpdating={setIsUpdatingSet} />
+          <UpdateSet
+            set={currentSet}
+            setId={setId}
+            setIsUpdating={setIsUpdatingSet}
+          />
         )}
       </>
 

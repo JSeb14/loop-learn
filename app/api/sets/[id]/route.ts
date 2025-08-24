@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { deleteSet, updateSet } from "@/app/controllers/sets/sets_controller";
+import { deleteSet, updateSet } from "@/lib/controllers/sets/setsController";
 import FlashcardSet from "@/lib/types/Flashcard";
 
 export async function PUT(
