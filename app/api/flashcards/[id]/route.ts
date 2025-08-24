@@ -1,4 +1,4 @@
-import { deleteCard, updateCard } from "@/app/controllers/flashcards/flashcards_controller";
+import { deleteCard, updateCard } from "@/lib/controllers/flashcards/flashcardsController";
 import Flashcard from "@/lib/types/Flashcard";
 import { NextResponse } from "next/server";
 

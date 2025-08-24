@@ -1,4 +1,4 @@
-import { getCardsBySet } from "@/app/controllers/flashcards/flashcards_controller";
+import { getCardsBySet } from "@/lib/controllers/flashcards/flashcardsController";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 

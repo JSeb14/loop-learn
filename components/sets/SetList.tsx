@@ -6,7 +6,7 @@ import delete_icon from "@/app/assets/icons/delete_icon.svg";
 import FlashcardSet from "@/lib/types/FlashcardSet";
 import add_icon from "@/app/assets/icons/add_icon.svg";
 import { useEffect } from "react";
-import { useSets } from "@/lib/hooks/UseSets";
+import { useSets } from "@/lib/hooks/useSets";
 
 export default function FlashcardSetList({
   initialSets,

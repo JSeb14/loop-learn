@@ -8,7 +8,7 @@ import chevron_forward_disabled_icon from "@/app/assets/icons/chevron_forward_di
 import Image from "next/image";
 import StartingSideForm from "@/components/practice/StartingSideForm";
 import Slide from "@/components/practice/Slide";
-import { useFlashcards } from "@/lib/hooks/UseFlashcards";
+import { useFlashcards } from "@/lib/hooks/useFlashcards";
 import { useParams } from "next/navigation";
 
 export default function Practice() {

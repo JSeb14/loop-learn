@@ -15,8 +15,6 @@ export default function Slide({
   const [frontImageUrl, setFrontImageUrl] = useState<string | null>(null);
   const [backImageUrl, setBackImageUrl] = useState<string | null>(null);
 
-  console.log(flashcard);
-
   useEffect(() => {
     async function fetchSignedUrl() {
       if (flashcard.front_image) {

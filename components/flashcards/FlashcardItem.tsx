@@ -6,12 +6,14 @@ import Image from "next/image";
 import edit_icon2 from "@/app/assets/icons/edit_icon.svg";
 import check_icon from "@/app/assets/icons/check_icon.svg";
 import delete_icon from "@/app/assets/icons/delete_icon.svg";
-import { uploadImages } from "@/app/util/upload";
-import { useFlashcards } from "@/lib/hooks/UseFlashcards";
+import { useFlashcards } from "@/lib/hooks/useFlashcards";
+import {
+  deleteFlashcard,
+  updateFlashcard,
+} from "@/lib/services/flashcards/flashcardService";
 
 export default function FlashcardItem({ card }: { card: Flashcard }) {
-
-  const {flashcards, setFlashcards} = useFlashcards();
+  const { flashcards, setFlashcards } = useFlashcards();
 
   const [front, setFront] = useState(card.front);
   const [back, setBack] = useState(card.back);
@@ -54,95 +56,6 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
     }
     fetchSignedUrl();
   }, [card.front_image, card.back_image]);
-
-  async function deleteImages(paths: (string | null)[]) {
-    if (paths.length > 0) {
-      try {
-        const imgResponse = await fetch("/api/images", {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ paths }),
-        });
-        if (!imgResponse.ok) {
-          console.error("Error deleting images");
-        }
-      } catch (err) {
-        console.error("Error deleting images", err);
-      }
-    }
-  }
-
-  async function updateCard() {
-    const paths = [];
-    if (isNewFrontImage) paths.push(card.front_image);
-    if (isNewBackImage) paths.push(card.back_image);
-
-    // First delete old images if necessary
-    deleteImages(paths);
-
-    // Now upload new images
-    const { frontUrl, backUrl } = await uploadImages(
-      frontImage,
-      backImage,
-      card.set_id
-    );
-
-    try {
-      const response = await fetch(`/api/flashcards/${card.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          front,
-          back,
-          front_image: frontUrl,
-          back_image: backUrl,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error updating set:", errorData);
-        return;
-      }
-
-      const data = await response.json();
-      const updatedCard: Flashcard = data;
-      const cardSet = flashcards.filter((card) => card.id !== updatedCard.id);
-      setFlashcards([...cardSet, updatedCard]);
-    } catch (error) {
-      console.error("Failed to update set:", error);
-    }
-
-    setIsEditing(false);
-  }
-
-  async function deleteCard() {
-    if (!window.confirm("Are you sure you'd like to delete this flashcard?")) {
-      return;
-    }
-
-    // First, delete the flashcard from the database
-    const response = await fetch(`/api/flashcards/${card.id}`, {
-      method: "DELETE",
-    });
-
-    if (!response.ok) {
-      alert("Failed to delete flashcard.");
-      return;
-    }
-
-    // If the flashcard had images, attempt to delete them
-    const paths = [card.front_image, card.back_image].filter(Boolean);
-    deleteImages(paths);
-
-    // Update local state after successful flashcard deletion
-    const cardSet = flashcards.filter((c) => c.id !== card.id);
-    setFlashcards(cardSet);
-  }
 
   return (
     <>
@@ -189,7 +102,15 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
                     "Are you sure you'd like to delete this flashcard?"
                   )
                 ) {
-                  deleteCard();
+                  deleteFlashcard(card).then((result) => {
+                    if (result) {
+                      // Update local state after successful flashcard deletion
+                      const cardSet = flashcards.filter(
+                        (c) => c.id !== card.id
+                      );
+                      setFlashcards(cardSet);
+                    }
+                  });
                 }
               }}
             >
@@ -269,7 +190,27 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
           </div>
 
           <div className="flex flex-row justify-evenly mt-5">
-            <button onClick={updateCard}>
+            <button
+              onClick={() => {
+                updateFlashcard(card, {
+                  front,
+                  back,
+                  frontImage: isNewFrontImage ? frontImage : null,
+                  backImage: isNewBackImage ? backImage : null,
+                  isNewFrontImage,
+                  isNewBackImage,
+                }).then(async (response) => {
+                  if (response) {
+                    const data: Flashcard = await response.json();
+                    const cardSet = flashcards.filter(
+                      (card) => card.id !== data.id
+                    );
+                    setFlashcards([...cardSet, data]);
+                  }
+                  setIsEditing(false);
+                });
+              }}
+            >
               <div className="flex flex-row gap-2">
                 <p>Confirm</p>
                 <Image src={check_icon} alt="Create card" />

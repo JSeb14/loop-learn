@@ -11,10 +11,10 @@ export type CurrentSetStoreActions = {
 
 export type CurrentSetStore = CurrentSetStoreState & CurrentSetStoreActions;
 
-const UseCurrentSetStore = create<CurrentSetStore>((set) => ({
+const useCurrentSetStore = create<CurrentSetStore>((set) => ({
   currentSet: null,
 
   setCurrentSet: (data: FlashcardSet | null) => set({ currentSet: data }),
 }));
 
-export default UseCurrentSetStore;
+export default useCurrentSetStore;

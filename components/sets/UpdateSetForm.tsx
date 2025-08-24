@@ -1,6 +1,6 @@
 "use client";
 
-import { useCurrentSet } from "@/lib/hooks/UseCurrentSet";
+import { useCurrentSet } from "@/lib/hooks/useCurrentSet";
 import FlashcardSet from "@/lib/types/FlashcardSet";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
