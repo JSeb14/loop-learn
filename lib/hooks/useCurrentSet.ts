@@ -1,8 +1,8 @@
 import { useCallback } from "react";
-import useSelectedSetStore from "../stores/currentSetStore";
+import useCurrentSetStore from "../stores/currentSetStore";
 
 export function useCurrentSet() {
-  const { currentSet, setCurrentSet } = useSelectedSetStore();
+  const { currentSet, setCurrentSet } = useCurrentSetStore();
 
   const getSet = useCallback(
     async (id: string) => {
