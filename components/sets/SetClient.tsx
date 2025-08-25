@@ -11,6 +11,7 @@ import add_icon from "@/app/assets/icons/add_icon.svg";
 import dynamic from "next/dynamic";
 import { useCurrentSet } from "@/lib/hooks/useCurrentSet";
 import { useFlashcards } from "@/lib/hooks/useFlashcards";
+import SetForm from "./SetForm";
 
 const DynamicCreateCard = dynamic(
   () => import("@/components/flashcards/CreateCard"),
@@ -79,10 +80,11 @@ export default function SetClient({
             </button>
           </>
         ) : (
-          <UpdateSet
+          <SetForm
             set={currentSet}
             setId={setId}
             setIsUpdating={setIsUpdatingSet}
+            from="update"
           />
         )}
       </>
@@ -109,7 +111,6 @@ export default function SetClient({
         {!!isAdding && (
           <DynamicCreateCard
             setId={setId}
-            card={null}
             setIsAdding={setIsAdding}
           />
         )}

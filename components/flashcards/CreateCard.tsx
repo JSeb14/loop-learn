@@ -4,6 +4,7 @@ import Flashcard from "@/lib/types/Flashcard";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import Image from "next/image";
 import check_icon from "@/app/assets/icons/check_icon.svg";
+import remove_selection_icon from "@/app/assets/icons/remove_selection.svg";
 import { useFlashcards } from "@/lib/hooks/useFlashcards";
 import { postCard } from "@/lib/services/flashcards/flashcardService";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,10 +21,13 @@ export default function CreateCard({
   setId: string;
   setIsAdding: Dispatch<SetStateAction<boolean>>;
 }) {
+  const { flashcards, setFlashcards } = useFlashcards();
+
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<FlashcardFormValues>({
     resolver: zodResolver(flashcardSchema),
@@ -31,15 +35,14 @@ export default function CreateCard({
     defaultValues: {
       front: "",
       back: "",
-      frontImage: undefined,
-      backImage: undefined,
+      frontImage: new DataTransfer().files,
+      backImage: new DataTransfer().files,
     },
   });
 
-  
-    useEffect(() => {
-      console.log("Current form values:", watch());
-    }, [watch("front"), watch("back"), watch("frontImage"), watch("backImage")]);
+  useEffect(() => {
+    console.log("Current form values:", watch());
+  }, [watch("front"), watch("back"), watch("frontImage"), watch("backImage")]);
 
   const onSubmit = (data: FlashcardFormValues) => {
     const frontImageFile =
@@ -67,8 +70,6 @@ export default function CreateCard({
     });
   };
 
-  const { flashcards, setFlashcards } = useFlashcards();
-
   return (
     <div className="bg-[#1E1E1E] rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-200 text-center w-full">
       <form encType="multipart/form-data">
@@ -83,7 +84,29 @@ export default function CreateCard({
             <p className="mt-1 text-xs text-red-500">{errors.front.message}</p>
           )}
           <label htmlFor="frontImage">Attach an image</label>
-          <input type="file" {...register("frontImage")} />
+          <div className="flex flex-row gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setValue("frontImage", new DataTransfer().files);
+                const input = document.getElementById(
+                  "frontImageInput"
+                ) as HTMLInputElement | null;
+                if (input) input.value = "";
+              }}
+            >
+              <Image src={remove_selection_icon} alt="Remove image" />
+            </button>
+            <input
+              id="frontImageInput"
+              type="file"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  setValue("frontImage", e.target.files);
+                }
+              }}
+            />
+          </div>
           {errors.frontImage && (
             <p className="mt-1 text-xs text-red-500">
               {errors.frontImage.message}
@@ -97,7 +120,29 @@ export default function CreateCard({
             <p className="mt-1 text-xs text-red-500">{errors.back.message}</p>
           )}
           <label htmlFor="backImage">Attach an image</label>
-          <input type="file" {...register("backImage")} />
+          <div className="flex flex-row gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setValue("backImage", new DataTransfer().files);
+                const input = document.getElementById(
+                  "backImageInput"
+                ) as HTMLInputElement | null;
+                if (input) input.value = "";
+              }}
+            >
+              <Image src={remove_selection_icon} alt="Remove image" />
+            </button>
+            <input
+              id="backImageInput"
+              type="file"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  setValue("backImage", e.target.files);
+                }
+              }}
+            />
+          </div>
           {errors.backImage && (
             <p className="mt-1 text-xs text-red-500">
               {errors.backImage.message}
