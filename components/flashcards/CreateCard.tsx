@@ -40,10 +40,6 @@ export default function CreateCard({
     },
   });
 
-  useEffect(() => {
-    console.log("Current form values:", watch());
-  }, [watch("front"), watch("back"), watch("frontImage"), watch("backImage")]);
-
   const onSubmit = (data: FlashcardFormValues) => {
     const frontImageFile =
       data.frontImage instanceof FileList
@@ -71,13 +67,14 @@ export default function CreateCard({
   };
 
   return (
-    <div className="bg-[#1E1E1E] rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-200 text-center w-full">
+    <div className="rounded-xl bg-gray-700 p-4 shadow-lg hover:shadow-xl transition-shadow duration-200 text-center w-full">
       <form encType="multipart/form-data">
-        <div className="flex flex-col gap-1 bg-[#1E1E1E] rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-200">
+        <div className="flex flex-col gap-1 rounded-xl bg-gray-800 p-4 shadow-lg hover:shadow-xl transition-shadow duration-200">
           <label htmlFor="front">Card Front</label>
           <input
             type="text"
             placeholder="Card front..."
+            className="bg-gray-400 rounded p-2 text-gray-900"
             {...register("front")}
           />
           {errors.front && (
@@ -113,9 +110,9 @@ export default function CreateCard({
             </p>
           )}
         </div>
-        <div className="flex flex-col text-gray-400 mt-2 gap-1">
+        <div className="flex flex-col mt-2 gap-1">
           <label htmlFor="back">Card Back</label>
-          <input type="text" placeholder="Card back..." {...register("back")} />
+          <input type="text" placeholder="Card back..." className="bg-gray-400 rounded p-2 text-gray-900" {...register("back")} />
           {errors.back && (
             <p className="mt-1 text-xs text-red-500">{errors.back.message}</p>
           )}
