@@ -1,30 +1,46 @@
 "use client";
 
-import { useCurrentSet } from "@/lib/hooks/useCurrentSet";
+import { createSet } from "@/lib/services/sets/setService";
+import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SetFormValues, setSchema } from "@/lib/schemas/setSchema";
 import FlashcardSet from "@/lib/types/FlashcardSet";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useCurrentSet } from "@/lib/hooks/useCurrentSet";
 
-export default function UpdateSet({
+const SetForm = ({
   set,
   setId,
   setIsUpdating,
+  from,
 }: {
   set: FlashcardSet | null;
-  setId: string;
-  setIsUpdating: Dispatch<SetStateAction<boolean>>;
-}) {
-  const { currentSet, setCurrentSet, getSet } = useCurrentSet();
+  setId: string | null;
+  setIsUpdating: Dispatch<SetStateAction<boolean>> | null;
+  from: "create" | "update";
+}) => {
+  const { setCurrentSet } = useCurrentSet();
 
-  useEffect(() => {
-    if (!set) getSet(setId);
-  }, [set, getSet, setId]);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SetFormValues>({
+    resolver: zodResolver(setSchema),
+    mode: "all",
+    defaultValues: {
+      name: set ? set.name : "",
+      description: set ? set.description : "",
+      isPrivate: set ? set.isPrivate : true,
+      subject: set ? set.subject : "Select a Subject",
+    },
+  });
 
-  const [name, setName] = useState(currentSet?.name);
-  const [description, setDescription] = useState(currentSet?.description);
-  const [isPrivate, setIsPrivate] = useState(currentSet?.isPrivate);
-  const [subject, setSubject] = useState(currentSet?.subject);
+  const router = useRouter();
 
   const subjects = [
+    "Select a Subject",
     "Anatomy",
     "Biology",
     "Chemistry",
@@ -38,20 +54,34 @@ export default function UpdateSet({
     "Technology",
   ];
 
-  async function update(e: React.FormEvent) {
-    e.preventDefault();
-    setIsUpdating(true);
+  const onSubmit = (data: SetFormValues) => {
+    if (from === "create") {
+      createSet(router, {
+        ...data,
+        description: !data.description ? null : data.description,
+        subject:
+          !data.subject || data.subject === "Select a Subject"
+            ? null
+            : data.subject,
+      });
+    } else if (from === "update" && setId) {
+      update(data);
+    }
+  };
+
+  async function update(form: SetFormValues) {
+    if (setIsUpdating) setIsUpdating(true);
     try {
-      const response = await fetch(`/api/sets/${set.id}`, {
+      const response = await fetch(`/api/sets/${setId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name,
-          description,
-          isPrivate,
-          subject,
+          name: form.name,
+          description: form.description,
+          isPrivate: form.isPrivate,
+          subject: form.subject,
         }),
       });
 
@@ -64,15 +94,15 @@ export default function UpdateSet({
       const data = await response.json();
       const updatedSet: FlashcardSet = data;
       setCurrentSet(updatedSet);
-      setIsUpdating(false);
+      if (setIsUpdating) setIsUpdating(false);
     } catch (error) {
       console.error("Failed to update set:", error);
     }
   }
 
   return (
-    <form>
-      <div className="w-max mt-5 flex flex-col gap-5">
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="w-max mt-5 flex flex-col gap-7">
         <div>
           <label
             htmlFor="name"
@@ -84,13 +114,12 @@ export default function UpdateSet({
             placeholder="Set name"
             type="text"
             id="name"
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-            }}
+            {...register("name")}
             className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
-            required
           />
+          {errors.name && (
+            <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
+          )}
         </div>
 
         <div>
@@ -104,29 +133,26 @@ export default function UpdateSet({
             placeholder="Set description"
             type="text"
             id="description"
-            value={description}
-            onChange={(e) => {
-              setDescription(e.target.value);
-            }}
+            {...register("description")}
             className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
-            required
           />
+          {errors.description && (
+            <p className="mt-1 text-xs text-red-500">
+              {errors.description.message}
+            </p>
+          )}
         </div>
 
         <div>
           <label
-            htmlFor="isPrivate"
+            htmlFor="subject"
             className="block text-sm font-medium text-white-900 dark:text-white mb-2"
           >
             Select a Subject for this Set
           </label>
           <select
-            name="subject"
-            value={subject}
             className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
-            onChange={(e) => {
-              setSubject(e.target.value);
-            }}
+            {...register("subject")}
           >
             {subjects.map((subjectOption, index) => {
               return (
@@ -136,6 +162,11 @@ export default function UpdateSet({
               );
             })}
           </select>
+          {errors.subject && (
+            <p className="mt-1 text-xs text-red-500">
+              {errors.subject.message}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-row gap-2 items-center">
@@ -148,31 +179,36 @@ export default function UpdateSet({
           <input
             type="checkbox"
             id="isPrivate"
-            checked={isPrivate}
-            onChange={() => {
-              setIsPrivate(!isPrivate);
-            }}
+            {...register("isPrivate")}
             className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
           />
+          {errors.isPrivate && (
+            <p className="mt-1 text-xs text-red-500">
+              {errors.isPrivate.message}
+            </p>
+          )}
         </div>
         <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-3" />
 
         <button
           type="submit"
           className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
-          onClick={update}
         >
-          Update Set
+          {from === "create" ? "Create New Set" : "Update Set"}
         </button>
-        <button
-          className="w-bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
-          onClick={() => {
-            setIsUpdating(false);
-          }}
-        >
-          Cancel
-        </button>
+        {from === "update" && setIsUpdating && (
+          <button
+            className="w-bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
+            onClick={() => {
+              setIsUpdating(false);
+            }}
+          >
+            Cancel
+          </button>
+        )}
       </div>
     </form>
   );
-}
+};
+
+export default SetForm;
