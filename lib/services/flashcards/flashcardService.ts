@@ -68,6 +68,8 @@ export async function updateFlashcard(
     isNewBackImage: boolean;
   }
 ): Promise<Response | null> {
+
+  console.log(updates);
   const {
     front,
     back,
@@ -85,9 +87,10 @@ export async function updateFlashcard(
   let body: Partial<Flashcard>;
 
   // Handle image updates
-  if (frontImage || backImage) {
+  if (frontImage || backImage || isNewFrontImage || isNewBackImage) {
     // Delete old images if necessary
     if (paths.length > 0) {
+      console.log("Deleting old images:", paths);
       await deleteImages(paths);
     }
     // Upload new images
@@ -112,7 +115,7 @@ export async function updateFlashcard(
       back_image: card.back_image,
     };
   }
-
+console.log(body);
   try {
     const response = await fetch(`/api/flashcards/${card.id}`, {
       method: "PUT",

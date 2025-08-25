@@ -36,15 +36,20 @@ export default function CreateCard({
     },
   });
 
-  const onSubmit = (data: FlashcardFormValues) => {
-    const frontImageFile = data.frontImage instanceof FileList 
-    ? data.frontImage[0] 
-    : data.frontImage;
   
-  const backImageFile = data.backImage instanceof FileList 
-    ? data.backImage[0] 
-    : data.backImage;
-    
+    useEffect(() => {
+      console.log("Current form values:", watch());
+    }, [watch("front"), watch("back"), watch("frontImage"), watch("backImage")]);
+
+  const onSubmit = (data: FlashcardFormValues) => {
+    const frontImageFile =
+      data.frontImage instanceof FileList
+        ? data.frontImage[0]
+        : data.frontImage;
+
+    const backImageFile =
+      data.backImage instanceof FileList ? data.backImage[0] : data.backImage;
+
     postCard({
       front: data.front,
       back: data.back,
