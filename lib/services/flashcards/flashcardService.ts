@@ -66,6 +66,11 @@ export async function updateFlashcard(
     backImage: File | undefined;
     isNewFrontImage: boolean;
     isNewBackImage: boolean;
+    ease_factor: number;
+    interval: number;
+    repetitions: number;
+    last_review_date: string;
+    next_review_date: string | null;
   }
 ): Promise<Response | null> {
 
@@ -77,6 +82,11 @@ export async function updateFlashcard(
     backImage,
     isNewFrontImage,
     isNewBackImage,
+    interval,
+    ease_factor,
+    repetitions,
+    last_review_date,
+    next_review_date
   } = updates;
 
   // Determine which images need to be deleted
@@ -106,6 +116,11 @@ export async function updateFlashcard(
       back,
       front_image: frontUrl,
       back_image: backUrl,
+      interval,
+      ease_factor,
+      repetitions,
+      last_review_date,
+      next_review_date: next_review_date ?? undefined
     };
   } else {
     body = {
@@ -113,9 +128,14 @@ export async function updateFlashcard(
       back,
       front_image: card.front_image,
       back_image: card.back_image,
+      interval,
+      ease_factor: card.ease_factor,
+      repetitions,
+      last_review_date,
+      next_review_date: next_review_date ?? undefined
     };
   }
-console.log(body);
+
   try {
     const response = await fetch(`/api/flashcards/${card.id}`, {
       method: "PUT",

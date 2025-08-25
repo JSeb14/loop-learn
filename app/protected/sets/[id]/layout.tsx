@@ -5,7 +5,8 @@ import Image from "next/image";
 import back_icon from "@/app/assets/icons/back_icon.svg";
 import stack_icon from "@/app/assets/icons/stack_icon.svg";
 import quiz_icon from "@/app/assets/icons/quiz_icon.svg";
-import manage_icon from "@/app/assets/icons/quiz_icon.svg";
+import manage_icon from "@/app/assets/icons/manage_icon.svg";
+import star_icon from "@/app/assets/icons/star_rate.svg";
 import { useParams, usePathname } from "next/navigation";
 
 export default function SetLayout({ children }: { children: React.ReactNode }) {
@@ -15,10 +16,11 @@ export default function SetLayout({ children }: { children: React.ReactNode }) {
   const items = [
     { label: "Back to Sets", link: "/protected/sets", icon: back_icon },
     { label: "Manage Set", link: `/protected/sets/${id}`, icon: manage_icon },
+    { label: "Deck", link: `/protected/sets/${id}/deck`, icon: stack_icon },
     {
       label: "Practice",
       link: `/protected/sets/${id}/practice`,
-      icon: stack_icon,
+      icon: star_icon,
     },
     { label: "Quiz", link: `/protected/sets/${id}`, icon: quiz_icon },
   ];

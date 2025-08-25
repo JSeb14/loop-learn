@@ -9,7 +9,7 @@ type Flashcard = {
   back_image: string | null;
   ease_factor: number;
   interval: number;
-  repititions: number;
+  repetitions: number;
   next_review_date: string;
   last_review_date: string | null;
 };
