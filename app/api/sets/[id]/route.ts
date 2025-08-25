@@ -7,7 +7,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const id = (await params).id;
+    const id = params.id;
 
     const updates: Partial<FlashcardSet> = await req.json();
 
