@@ -67,6 +67,11 @@ export const updateCard = async (
       back: updates.back,
       front_image: updates.front_image,
       back_image: updates.back_image,
+      ease_factor: updates.ease_factor,
+      interval: updates.interval,
+      repetitions: updates.repetitions,
+      last_review_date: updates.last_review_date,
+      next_review_date: updates.next_review_date,
     })
     .eq("id", id)
     .select();
