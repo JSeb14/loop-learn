@@ -28,8 +28,8 @@ export async function deleteImages(paths: (string | null)[]): Promise<boolean> {
 }
 
 export async function uploadImages(
-  frontImage: File | null,
-  backImage: File | null,
+  frontImage: File | undefined,
+  backImage: File | undefined,
   setId: string,
   uniqueId: string
 ) {

@@ -4,9 +4,9 @@ export async function createSet(
   router: AppRouterInstance,
   data: {
     name: string;
-    description: string;
+    description: string | null;
     isPrivate: boolean;
-    subject: string;
+    subject: string | null;
   }
 ) {
   const response = await fetch("/api/sets", {
@@ -14,12 +14,7 @@ export async function createSet(
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      name: data.name,
-      description: data.description,
-      isPrivate: data.isPrivate,
-      subject: data.subject,
-    }),
+    body: JSON.stringify(data),
   });
 
   if (response.ok) {
