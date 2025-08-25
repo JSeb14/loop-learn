@@ -130,10 +130,10 @@ export default function UpdateCard({
   };
 
   return (
-    <div className="rounded-xl bg-gray-700 p-4 shadow-lg hover:shadow-xl transition-shadow duration-200 text-center w-full">
+    <div className="bg-[#1E1E1E] rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-200 text-center w-full">
       <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
         {/* Front Card Section */}
-        <div className="flex flex-col gap-1 rounded-xl bg-gray-800 p-4 shadow-lg hover:shadow-xl transition-shadow duration-200">
+        <div className="flex flex-col gap-1 bg-[#1E1E1E] rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-200">
           <label htmlFor="front">Card Front</label>
           <input
             type="text"
