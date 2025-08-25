@@ -12,7 +12,7 @@ export default async function Sets() {
     redirect("/auth/login");
   }
 
-  const {sets, error} = await getAllSets();    
+  const {sets} = await getAllSets();    
 
   return <FlashcardSetList initialSets={sets} />;
 }
