@@ -107,7 +107,11 @@ export default function SetClient({
           </div>
         </button>
         {!!isAdding && (
-          <DynamicCreateCard setId={setId} setIsAdding={setIsAdding} />
+          <DynamicCreateCard
+            setId={setId}
+            card={null}
+            setIsAdding={setIsAdding}
+          />
         )}
       </>
     </div>
