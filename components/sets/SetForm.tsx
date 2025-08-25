@@ -2,12 +2,26 @@
 
 import { createSet } from "@/lib/services/sets/setService";
 import { useRouter } from "next/navigation";
-import { ReactElement } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SetFormValues, setSchema } from "@/lib/schemas/setSchema";
+import FlashcardSet from "@/lib/types/FlashcardSet";
+import { useCurrentSet } from "@/lib/hooks/useCurrentSet";
 
-const CreateSetForm = (): ReactElement => {
+const SetForm = ({
+  set,
+  setId,
+  setIsUpdating,
+  from,
+}: {
+  set: FlashcardSet | null;
+  setId: string | null;
+  setIsUpdating: Dispatch<SetStateAction<boolean>> | null;
+  from: "create" | "update";
+}) => {
+  const { setCurrentSet } = useCurrentSet();
+
   const {
     register,
     handleSubmit,
@@ -16,10 +30,10 @@ const CreateSetForm = (): ReactElement => {
     resolver: zodResolver(setSchema),
     mode: "all",
     defaultValues: {
-      name: "",
-      description: "",
-      isPrivate: true,
-      subject: "Select a Subject",
+      name: set ? set.name : "",
+      description: set ? set.description : "",
+      isPrivate: set ? set.isPrivate : true,
+      subject: set ? set.subject : "Select a Subject",
     },
   });
 
@@ -41,15 +55,50 @@ const CreateSetForm = (): ReactElement => {
   ];
 
   const onSubmit = (data: SetFormValues) => {
-    createSet(router, {
-      ...data,
-      description: !data.description ? null : data.description,
-      subject:
-        !data.subject || data.subject === "Select a Subject"
-          ? null
-          : data.subject,
-    });
+    if (from === "create") {
+      createSet(router, {
+        ...data,
+        description: !data.description ? null : data.description,
+        subject:
+          !data.subject || data.subject === "Select a Subject"
+            ? null
+            : data.subject,
+      });
+    } else if (from === "update" && setId) {
+      update(data);
+    }
   };
+
+  async function update(form: SetFormValues) {
+    if (setIsUpdating) setIsUpdating(true);
+    try {
+      const response = await fetch(`/api/sets/${setId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          description: form.description,
+          isPrivate: form.isPrivate,
+          subject: form.subject,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error updating set:", errorData);
+        return;
+      }
+
+      const data = await response.json();
+      const updatedSet: FlashcardSet = data;
+      setCurrentSet(updatedSet);
+      if (setIsUpdating) setIsUpdating(false);
+    } catch (error) {
+      console.error("Failed to update set:", error);
+    }
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -145,11 +194,21 @@ const CreateSetForm = (): ReactElement => {
           type="submit"
           className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
         >
-          Create New Set
+          {from === "create" ? "Create New Set" : "Update Set"}
         </button>
+        {from === "update" && setIsUpdating && (
+          <button
+            className="w-bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
+            onClick={() => {
+              setIsUpdating(false);
+            }}
+          >
+            Cancel
+          </button>
+        )}
       </div>
     </form>
   );
 };
 
-export default CreateSetForm;
+export default SetForm;
