@@ -23,8 +23,8 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
     <>
       {!isEditing ? (
         <div className="flex flex-row w-full gap-3">
-          <div className="bg-[#1E1E1E] rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-200 w-full flex flex-col items-center text-center">
-            <h3 className="bg-[#1E1E1E] rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-200 w-full flex flex-col items-center text-center">
+          <div className="bg-[#1E1E1E] rounded-xl bg-gray-700 shadow-md p-6 hover:shadow-xl transition-shadow duration-200 w-full flex flex-col items-center text-center">
+            <h3 className="bg-[#1E1E1E] rounded-xl bg-gray-800 p-6 shadow-lg hover:shadow-xl transition-shadow duration-200 w-full flex flex-col items-center text-center">
               {card?.front}
               {frontImageUrl && (
                 <Image
@@ -36,7 +36,7 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
                 />
               )}
             </h3>
-            <h3 className="text-gray-400 mt-2 text-center">
+            <h3 className="text-gray-300 mt-2 text-center">
               {card?.back}
               {backImageUrl && (
                 <Image
