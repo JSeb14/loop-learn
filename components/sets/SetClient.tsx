@@ -3,7 +3,6 @@
 import Flashcard from "@/lib/types/Flashcard";
 import FlashcardSet from "@/lib/types/FlashcardSet";
 import { Fragment, ReactElement, useEffect, useState } from "react";
-import UpdateSet from "./UpdateSetForm";
 import Image from "next/image";
 import edit_icon from "@/app/assets/icons/edit_doc_icon.svg";
 import FlashcardItem from "../flashcards/FlashcardItem";
