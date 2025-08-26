@@ -26,21 +26,49 @@ export default function SetLayout({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className="flex-1 w-full flex flex-col gap-10 items-center mb-5">
-      <nav className="w-full flex flex-row justify-evenly border-b border-b-foreground/10 pb-2">
-        {items.map((nav, index) => {
-          const c = `flex flex-row gap-1 items-center ${
-            path === nav.link ? "font-bold" : ""
-          }`;
-          return (
-            <Link key={index} className={c} href={nav.link}>
-              <Image src={nav.icon} alt={nav.label} />
-              {nav.label}
-            </Link>
-          );
-        })}
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
+      {/* Modern Navigation Bar */}
+      <nav className="bg-card/80 backdrop-blur-md border-b border-border/50 shadow-sm sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-center space-x-8">
+            {items.map((nav, index) => {
+              const isActive = path === nav.link;
+              return (
+                <Link 
+                  key={index} 
+                  href={nav.link}
+                  className={`
+                    group flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 
+                    ${isActive 
+                      ? 'bg-primary text-primary-foreground shadow-md' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                    }
+                  `}
+                >
+                  <div className={`
+                    w-5 h-5 transition-all duration-200 
+                    ${isActive ? 'brightness-0 invert' : 'group-hover:scale-110'}
+                  `}>
+                    <Image 
+                      src={nav.icon} 
+                      alt={nav.label}
+                      width={20}
+                      height={20}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <span className={`font-medium ${isActive ? 'font-semibold' : ''}`}>
+                    {nav.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
       </nav>
-      <div className="w-full flex-1 flex flex-col gap-10 max-w-5xl p-5 items-center">
+
+      {/* Main Content Area */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
         {children}
       </div>
     </div>

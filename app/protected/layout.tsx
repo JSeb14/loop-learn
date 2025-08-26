@@ -1,4 +1,3 @@
-import { DeployButton } from "@/components/ui/DeployButton";
 import { EnvVarWarning } from "@/components/ui/EnvVarMessage";
 import { AuthButton } from "@/components/auth/auth-button";
 import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
@@ -16,10 +15,27 @@ export default function ProtectedLayout({
         <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
           <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
             <div className="flex gap-5 items-center font-semibold">
-              <Link href={"/"}>Next.js Supabase Starter</Link>
-              <div className="flex items-center gap-2">
-                <DeployButton />
-              </div>
+              <nav className="flex gap-5 items-center">
+                <Link
+                  href="/"
+                  className="px-3 py-1 rounded-md hover:bg-foreground/5 transition-colors font-bold text-lg"
+                >
+                  Loop Learn
+                </Link>
+                <span className="h-6 border-l border-foreground/20" />
+                <Link
+                  href="/protected/sets"
+                  className="px-3 py-1 rounded-md hover:bg-foreground/5 transition-colors"
+                >
+                  Your Sets
+                </Link>
+                <Link
+                  href="/protected/search-sets"
+                  className="px-3 py-1 rounded-md hover:bg-foreground/5 transition-colors"
+                >
+                  Search for Sets
+                </Link>
+              </nav>
             </div>
             {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
           </div>
