@@ -1,10 +1,13 @@
-import SetForm from "@/components/sets/SetForm";
+"use client";
 
-export default async function CreateSet() {
+import SetForm from "@/components/sets/SetForm";
+import { useRouter } from "next/navigation";
+
+export default function CreateSet() {
+  const router = useRouter();
   return (
     <div>
-      <h1>Create a new Flashcard set here!</h1>
-      <SetForm set={null} setId={null} setIsUpdating={null} from="create" />
+      <SetForm set={null} setId={null} onCancelClick={() => {router.push("/protected/sets")}} setIsUpdating={null} from="create" />
     </div>
   );
 }

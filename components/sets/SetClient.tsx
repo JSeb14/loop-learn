@@ -119,6 +119,7 @@ export default function SetClient({
           <SetForm
             set={currentSet}
             setId={setId}
+            onCancelClick={() => setIsUpdatingSet(false)}
             setIsUpdating={setIsUpdatingSet}
             from="update"
           />

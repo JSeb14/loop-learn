@@ -32,7 +32,7 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
                 <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Front</span>
               </div>
               <div className="bg-secondary/30 rounded-lg p-4 min-h-[120px] flex flex-col justify-center flex-1">
-                <p className="text-foreground text-lg leading-relaxed text-center">
+                <p className="text-foreground text-lg leading-relaxed text-center break-words">
                 {card?.front}
                 </p>
                 {frontImageUrl && (
@@ -55,7 +55,7 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
                 <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Back</span>
               </div>
               <div className="bg-accent/10 rounded-lg p-4 min-h-[120px] flex flex-col justify-center flex-1">
-                <p className="text-foreground text-lg leading-relaxed text-center">
+                <p className="text-foreground text-lg leading-relaxed text-center break-words">
                 {card?.back}
                 </p>
                 {backImageUrl && (
