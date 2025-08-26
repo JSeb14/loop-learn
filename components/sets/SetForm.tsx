@@ -13,11 +13,13 @@ const SetForm = ({
   set,
   setId,
   setIsUpdating,
+  onCancelClick,
   from,
 }: {
   set: FlashcardSet | null;
   setId: string | null;
   setIsUpdating: Dispatch<SetStateAction<boolean>> | null;
+  onCancelClick: () => void;
   from: "create" | "update";
 }) => {
   const { setCurrentSet } = useCurrentSet();
@@ -101,113 +103,152 @@ const SetForm = ({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="w-max mt-5 flex flex-col gap-7">
-        <div>
-          <label
-            htmlFor="name"
-            className="block mb-2 text-sm font-medium text-white-900 dark:text-white"
-          >
-            Set Name
+    <div className="w-full max-w-2xl mx-auto">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl font-semibold text-foreground">
+            {from === "create"
+              ? "Create New Flashcard Set"
+              : "Update Set Details"}
+          </h2>
+          <p className="text-muted-foreground">
+            {from === "create"
+              ? "Build a new study set to organize your learning materials"
+              : "Modify your flashcard set information"}
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="name" className="text-sm font-medium text-foreground">
+            Set Name <span className="text-destructive">*</span>
           </label>
           <input
-            placeholder="Set name"
+            placeholder="Enter a descriptive name for your set"
             type="text"
             id="name"
             {...register("name")}
-            className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
+            className="input-modern w-full focus-ring"
           />
           {errors.name && (
-            <p className="mt-1 text-xs text-red-500">{errors.name.message}</p>
+            <p className="text-xs text-destructive flex items-center gap-1">
+              <span className="w-1 h-1 bg-destructive rounded-full" />
+              {errors.name.message}
+            </p>
           )}
         </div>
 
-        <div>
+        <div className="space-y-2">
           <label
             htmlFor="description"
-            className="block mb-2 text-sm font-medium text-white-900 dark:text-white"
+            className="text-sm font-medium text-foreground"
           >
-            Set Description
+            Description
           </label>
-          <input
-            placeholder="Set description"
-            type="text"
+          <textarea
+            placeholder="Briefly describe what this set covers (optional)"
             id="description"
+            rows={3}
             {...register("description")}
-            className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
+            className="input-modern w-full resize-none focus-ring"
           />
           {errors.description && (
-            <p className="mt-1 text-xs text-red-500">
+            <p className="text-xs text-destructive flex items-center gap-1">
+              <span className="w-1 h-1 bg-destructive rounded-full" />
               {errors.description.message}
             </p>
           )}
         </div>
 
-        <div>
+        <div className="space-y-2">
           <label
             htmlFor="subject"
-            className="block text-sm font-medium text-white-900 dark:text-white mb-2"
+            className="text-sm font-medium text-foreground"
           >
-            Select a Subject for this Set
+            Subject Category
           </label>
-          <select
-            className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
-            {...register("subject")}
-          >
-            {subjects.map((subjectOption, index) => {
-              return (
+          <div className="relative">
+            <select
+              {...register("subject")}
+              className="input-modern w-full appearance-none cursor-pointer focus-ring pr-10"
+            >
+              {subjects.map((subjectOption, index) => (
                 <option value={subjectOption} key={`subject-${index}`}>
                   {subjectOption}
                 </option>
-              );
-            })}
-          </select>
+              ))}
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <svg
+                className="w-4 h-4 text-muted-foreground"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </div>
+          </div>
           {errors.subject && (
-            <p className="mt-1 text-xs text-red-500">
+            <p className="text-xs text-destructive flex items-center gap-1">
+              <span className="w-1 h-1 bg-destructive rounded-full" />
               {errors.subject.message}
             </p>
           )}
         </div>
 
-        <div className="flex flex-row gap-2 items-center">
-          <label
-            htmlFor="isPrivate"
-            className="block text-sm font-medium text-white-900 dark:text-white"
-          >
-            Mark Set as Private?
-          </label>
-          <input
-            type="checkbox"
-            id="isPrivate"
-            {...register("isPrivate")}
-            className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
-          />
+        <div className="bg-secondary/30 rounded-lg p-4 space-y-3">
+          <div className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="isPrivate"
+              {...register("isPrivate")}
+              className="mt-1 w-4 h-4 text-primary bg-background border-border rounded focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
+            />
+            <div className="flex-1 space-y-1">
+              <label
+                htmlFor="isPrivate"
+                className="text-sm font-medium text-foreground cursor-pointer"
+              >
+                Make this set private
+              </label>
+              <p className="text-xs text-muted-foreground">
+                Private sets are only visible to you. Public sets can be
+                discovered by other users.
+              </p>
+            </div>
+          </div>
           {errors.isPrivate && (
-            <p className="mt-1 text-xs text-red-500">
+            <p className="text-xs text-destructive flex items-center gap-1">
+              <span className="w-1 h-1 bg-destructive rounded-full" />
               {errors.isPrivate.message}
             </p>
           )}
         </div>
-        <div className="w-full p-[1px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent my-3" />
 
-        <button
-          type="submit"
-          className="bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
-        >
-          {from === "create" ? "Create New Set" : "Update Set"}
-        </button>
-        {from === "update" && setIsUpdating && (
-          <button
-            className="w-bg-gray-50 border border-gray-300 text-white-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700"
-            onClick={() => {
-              setIsUpdating(false);
-            }}
-          >
-            Cancel
-          </button>
-        )}
-      </div>
-    </form>
+        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-border/50">
+          <div className="flex flex-col gap-4 w-full">
+            <button
+              type="submit"
+              className="btn-primary flex-1 order-1 sm:order-2"
+            >
+              {from === "create" ? "Create Set" : "Save Changes"}
+            </button>
+            <button
+              type="button"
+              onClick={onCancelClick}
+              className="btn-secondary flex-1 order-1 sm:order-2"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
   );
 };
 

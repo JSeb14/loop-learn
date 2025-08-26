@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import chevron_forward_icon from "@/app/assets/icons/chevron_forward_icon.svg";
+import chevron_forward from "@/app/assets/icons/chevron_forward.svg";
 import Image from "next/image";
 import StartingSideForm from "@/components/practice/StartingSideForm";
 import Slide from "@/components/practice/Slide";
@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 import ConfidenceRating from "@/components/practice/ConfidenceRating";
 import Flashcard from "@/lib/types/Flashcard";
 import { updateFlashcardSM2 } from "@/lib/services/flashcards/sm2Service";
+import { Button } from "@/components/ui/Button";
 
 export default function Practice() {
   const params = useParams<{ id: string }>();
@@ -17,8 +18,8 @@ export default function Practice() {
 
   const [startFront, setStartFront] = useState<boolean>(true);
   const [settingUp, setSettingUp] = useState<boolean>(true);
-  const [index, setIndex] = useState(0);
   const [sessionSet, setSessionSet] = useState<Flashcard[]>([]);
+  const [isSlideComplete, setIsSlideComplete] = useState(false);
 
   const [rating, setRating] = useState<number>(3);
 
@@ -27,7 +28,6 @@ export default function Practice() {
   }, [flashcards, getFlashcards, settingUp, settingUp, params.id]);
 
   useEffect(() => {
-    console.log("Flashcards updated:");
     const dueCards = flashcards.filter((card) => {
       const today = new Date();
       const nextReviewedDate = card.next_review_date
@@ -36,34 +36,39 @@ export default function Practice() {
       return nextReviewedDate <= today;
     });
     setSessionSet(dueCards);
-  }, []);
+  }, [flashcards]);
 
   useEffect(() => {
     setRating(3);
-  }, [index]);
-
-  const incrementIndex = () => {
-    if (index + 1 < sessionSet.length) setIndex(index + 1);
-    else setSessionSet([]);
-  };
+    setIsSlideComplete(false);
+  }, [sessionSet]);
 
   const handleSubmit = async () => {
-    // Reinsert flashcard into the session set if low rating
-    if (rating < 3) setSessionSet([...sessionSet, sessionSet[index]]);
-
+    const currentCard = sessionSet[0];
+    
     // Update flashcard using SM2 algorithm
     try {
-      const updatedCard = await updateFlashcardSM2(sessionSet[index], rating);
-      console.log("Updated card:", updatedCard);
+      const updatedCard = await updateFlashcardSM2(currentCard, rating);
       const otherCards = flashcards.filter(
-        (card) => card.id !== sessionSet[index].id
+        (card) => card.id !== currentCard.id
       );
       setFlashcards([...otherCards, updatedCard]);
-      incrementIndex();
+      
+      // Remove the current card from the session set
+      const remainingCards = sessionSet.slice(1);
+      
+      // Reinsert flashcard into the session set if low rating
+      if (rating < 3) {
+        setSessionSet([...remainingCards, currentCard]);
+      } else {
+        setSessionSet(remainingCards);
+      }
     } catch (error) {
       console.error("Failed to update flashcard:", error);
     }
   };
+
+  console.log("flashcards:", sessionSet);
 
   return (
     <>
@@ -77,30 +82,33 @@ export default function Practice() {
           {sessionSet.length > 0 ? (
             <>
               <div>
-                {index + 1} / {sessionSet.length}
+                Cards remaining: {sessionSet.length}
               </div>
               <Slide
-                key={sessionSet[index].id}
-                flashcard={sessionSet[index]}
+                key={sessionSet[0].id}
+                flashcard={sessionSet[0]}
                 startFront={startFront}
+                setIsSlideComplete={setIsSlideComplete}
               />
-              <div className="mt-4">
-                <ConfidenceRating rating={rating} setRating={setRating} />
-              </div>
-              <button
-                className="border border-solid bg-gray-500 rounded-md mt-2 p-3 w-1/5"
-                onClick={handleSubmit}
-              >
-                <div className="flex items-center justify-center">
-                  <p>Next</p>
-                  <Image
-                    src={chevron_forward_icon}
-                    alt="Next card"
-                    width={24}
-                    height={24}
-                  />
+
+              {!!isSlideComplete && (
+                <div className="flex flex-col gap-5 items-center">
+                  <div className="mt-4">
+                    <ConfidenceRating rating={rating} setRating={setRating} />
+                  </div>
+                  <Button onClick={handleSubmit} className="w-1/2 mt-3">
+                    <div className="flex items-center justify-center">
+                      <p>Next</p>
+                      <Image
+                        src={chevron_forward}
+                        alt="Next card"
+                        width={24}
+                        height={24}
+                      />
+                    </div>
+                  </Button>
                 </div>
-              </button>
+              )}
             </>
           ) : (
             <div>There are no flashcards to practice at this time. Hooray!</div>
