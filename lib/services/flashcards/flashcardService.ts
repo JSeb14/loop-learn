@@ -69,7 +69,7 @@ export async function updateFlashcard(
     ease_factor: number;
     interval: number;
     repetitions: number;
-    last_review_date: string;
+    last_review_date: string | null;
     next_review_date: string | null;
   }
 ): Promise<Response | null> {

@@ -4,9 +4,9 @@ import Flashcard from "@/lib/types/Flashcard";
 import FlashcardSet from "@/lib/types/FlashcardSet";
 import { Fragment, ReactElement, useEffect, useState } from "react";
 import Image from "next/image";
-import edit_icon from "@/app/assets/icons/edit_doc_icon.svg";
+import edit from "@/app/assets/icons/edit_doc.svg";
 import FlashcardItem from "../flashcards/FlashcardItem";
-import add_icon from "@/app/assets/icons/add_icon.svg";
+import add_circle from "@/app/assets/icons/add_circle.svg";
 import dynamic from "next/dynamic";
 import { useCurrentSet } from "@/lib/hooks/useCurrentSet";
 import { useFlashcards } from "@/lib/hooks/useFlashcards";
@@ -106,7 +106,7 @@ export default function SetClient({
               className="btn-secondary inline-flex items-center gap-2 group"
             >
               <Image 
-                src={edit_icon} 
+                src={edit} 
                 alt="Edit set properties"
                 width={16}
                 height={16}
@@ -143,7 +143,7 @@ export default function SetClient({
             <div className="flex items-center justify-center gap-3 text-muted-foreground group-hover:text-primary transition-colors duration-200">
               <div className="bg-muted group-hover:bg-primary/10 rounded-full p-3 transition-colors duration-200">
                 <Image 
-                  src={add_icon} 
+                  src={add_circle} 
                   alt="Add new flashcard"
                   width={20}
                   height={20}
@@ -177,7 +177,7 @@ export default function SetClient({
             <div className="max-w-md mx-auto">
               <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
                 <Image 
-                  src={add_icon} 
+                  src={add_circle} 
                   width={32} 
                   height={32}
                   alt="No cards"
@@ -195,7 +195,7 @@ export default function SetClient({
                 className="btn-primary inline-flex items-center gap-2"
               >
                 <Image 
-                  src={add_icon} 
+                  src={add_circle} 
                   width={16} 
                   height={16}
                   alt="Create"

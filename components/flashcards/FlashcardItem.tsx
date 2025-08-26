@@ -3,8 +3,8 @@
 import Flashcard from "@/lib/types/Flashcard";
 import React, { useState } from "react";
 import Image from "next/image";
-import edit_icon2 from "@/app/assets/icons/edit_icon.svg";
-import delete_icon from "@/app/assets/icons/delete_icon.svg";
+import edit2 from "@/app/assets/icons/edit.svg";
+import delete_icon from "@/app/assets/icons/delete.svg";
 import { useFlashcards } from "@/lib/hooks/useFlashcards";
 import {
   deleteFlashcard,
@@ -24,52 +24,52 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
       {!isEditing ? (
         <div className="group relative">
           <div className="bg-card border border-border rounded-xl p-6 transition-all duration-300 hover:shadow-lg">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:items-stretch">
               
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-3 h-3 bg-primary rounded-full" />
-                  <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Front</span>
+              <div className="space-y-3 flex flex-col">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-3 h-3 bg-primary rounded-full" />
+                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Front</span>
+              </div>
+              <div className="bg-secondary/30 rounded-lg p-4 min-h-[120px] flex flex-col justify-center flex-1">
+                <p className="text-foreground text-lg leading-relaxed text-center">
+                {card?.front}
+                </p>
+                {frontImageUrl && (
+                <div className="mt-4 flex justify-center">
+                  <Image
+                  src={frontImageUrl as string}
+                  alt={card?.front}
+                  width={200}
+                  height={200}
+                  className="rounded-lg shadow-md max-w-full h-auto"
+                  />
                 </div>
-                <div className="bg-secondary/30 rounded-lg p-4 min-h-[120px] flex flex-col justify-center">
-                  <p className="text-foreground text-lg leading-relaxed text-center">
-                    {card?.front}
-                  </p>
-                  {frontImageUrl && (
-                    <div className="mt-4 flex justify-center">
-                      <Image
-                        src={frontImageUrl as string}
-                        alt={card?.front}
-                        width={200}
-                        height={200}
-                        className="rounded-lg shadow-md max-w-full h-auto"
-                      />
-                    </div>
-                  )}
-                </div>
+                )}
+              </div>
               </div>
 
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-3 h-3 bg-accent rounded-full" />
-                  <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Back</span>
+              <div className="space-y-3 flex flex-col">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-3 h-3 bg-accent rounded-full" />
+                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Back</span>
+              </div>
+              <div className="bg-accent/10 rounded-lg p-4 min-h-[120px] flex flex-col justify-center flex-1">
+                <p className="text-foreground text-lg leading-relaxed text-center">
+                {card?.back}
+                </p>
+                {backImageUrl && (
+                <div className="mt-4 flex justify-center">
+                  <Image
+                  src={backImageUrl as string}
+                  alt={card?.back}
+                  width={200}
+                  height={200}
+                  className="rounded-lg shadow-md max-w-full h-auto"
+                  />
                 </div>
-                <div className="bg-accent/10 rounded-lg p-4 min-h-[120px] flex flex-col justify-center">
-                  <p className="text-foreground text-lg leading-relaxed text-center">
-                    {card?.back}
-                  </p>
-                  {backImageUrl && (
-                    <div className="mt-4 flex justify-center">
-                      <Image
-                        src={backImageUrl as string}
-                        alt={card?.back}
-                        width={200}
-                        height={200}
-                        className="rounded-lg shadow-md max-w-full h-auto"
-                      />
-                    </div>
-                  )}
-                </div>
+                )}
+              </div>
               </div>
             </div>
 
@@ -80,7 +80,7 @@ export default function FlashcardItem({ card }: { card: Flashcard }) {
                 title="Edit flashcard"
               >
                 <Image 
-                  src={edit_icon2} 
+                  src={edit2} 
                   alt="Edit card" 
                   width={18} 
                   height={18}

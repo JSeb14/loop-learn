@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import delete_icon from "@/app/assets/icons/delete_icon.svg";
+import delete_icon from "@/app/assets/icons/delete.svg";
 import FlashcardSet from "@/lib/types/FlashcardSet";
-import add_icon from "@/app/assets/icons/add_icon.svg";
+import add_circle from "@/app/assets/icons/add_circle.svg";
 import { useEffect } from "react";
 import { useSets } from "@/lib/hooks/useSets";
 import { deleteSet } from "@/lib/services/sets/setService";
@@ -44,7 +44,7 @@ export default function FlashcardSetList({
             <span className="text-lg">Create New Set</span>
             <div className="bg-white/20 rounded-full p-2 group-hover:bg-white/30 transition-colors duration-200">
               <Image 
-                src={add_icon} 
+                src={add_circle} 
                 width={20} 
                 height={20} 
                 alt="Create flashcard set"
@@ -147,7 +147,7 @@ export default function FlashcardSetList({
               <div className="max-w-md mx-auto">
                 <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
                   <Image 
-                    src={add_icon} 
+                    src={add_circle} 
                     width={32} 
                     height={32}
                     alt="No sets"
@@ -165,7 +165,7 @@ export default function FlashcardSetList({
                   className="btn-primary inline-flex items-center gap-2"
                 >
                   <Image 
-                    src={add_icon} 
+                    src={add_circle} 
                     width={16} 
                     height={16}
                     alt="Create"

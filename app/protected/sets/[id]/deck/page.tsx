@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import chevron_forward_icon from "@/app/assets/icons/chevron_forward_icon.svg";
-import chevron_backward_icon from "@/app/assets/icons/chevron_backward_icon.svg";
-import chevron_backward_disabled_icon from "@/app/assets/icons/chevron_backward_disabled_icon.svg";
-import chevron_forward_disabled_icon from "@/app/assets/icons/chevron_forward_disabled_icon.svg";
+import chevron_forward from "@/app/assets/icons/chevron_forward.svg";
+import chevron_backward from "@/app/assets/icons/chevron_backward.svg";
+import chevron_backward_disabled from "@/app/assets/icons/chevron_backward_disabled.svg";
+import chevron_forward_disabled from "@/app/assets/icons/chevron_forward_disabled.svg";
 import Image from "next/image";
 import StartingSideForm from "@/components/practice/StartingSideForm";
 import Slide from "@/components/practice/Slide";
@@ -53,8 +53,8 @@ export default function Deck() {
               <Image
                 src={
                   index === 0
-                    ? chevron_backward_disabled_icon
-                    : chevron_backward_icon
+                    ? chevron_backward_disabled
+                    : chevron_backward
                 }
                 alt="Previous card"
                 width={48}
@@ -67,8 +67,8 @@ export default function Deck() {
               <Image
                 src={
                   index === flashcards.length - 1
-                    ? chevron_forward_disabled_icon
-                    : chevron_forward_icon
+                    ? chevron_forward_disabled
+                    : chevron_forward
                 }
                 alt="Next card"
                 width={48}

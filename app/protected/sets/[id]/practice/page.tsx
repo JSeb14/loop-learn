@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import chevron_forward_icon from "@/app/assets/icons/chevron_forward_icon.svg";
+import chevron_forward from "@/app/assets/icons/chevron_forward.svg";
 import Image from "next/image";
 import StartingSideForm from "@/components/practice/StartingSideForm";
 import Slide from "@/components/practice/Slide";
@@ -94,7 +94,7 @@ export default function Practice() {
                 <div className="flex items-center justify-center">
                   <p>Next</p>
                   <Image
-                    src={chevron_forward_icon}
+                    src={chevron_forward}
                     alt="Next card"
                     width={24}
                     height={24}

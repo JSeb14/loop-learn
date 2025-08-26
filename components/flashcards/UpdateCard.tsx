@@ -13,8 +13,8 @@ import Flashcard from "@/lib/types/Flashcard";
 import { updateFlashcard } from "@/lib/services/flashcards/flashcardService";
 import { useFlashcards } from "@/lib/hooks/useFlashcards";
 
-import check_icon from "@/app/assets/icons/check_icon.svg";
-import remove_selection_icon from "@/app/assets/icons/remove_selection.svg";
+import check from "@/app/assets/icons/check.svg";
+import remove_selection from "@/app/assets/icons/remove_selection.svg";
 
 interface UpdateCardProps {
   card: Flashcard;
@@ -115,6 +115,11 @@ export default function UpdateCard({
         backImage: isNewBackImage ? data.backImage[0] : undefined,
         isNewFrontImage,
         isNewBackImage,
+        ease_factor: card.ease_factor,
+        interval: card.interval,
+        repetitions: card.repetitions,
+        last_review_date: card.last_review_date,
+        next_review_date: card.next_review_date,
       });
 
       if (response) {
@@ -130,117 +135,159 @@ export default function UpdateCard({
   };
 
   return (
-    <div className="bg-[#1E1E1E] rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-200 text-center w-full">
-      <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
-        {/* Front Card Section */}
-        <div className="flex flex-col gap-1 bg-[#1E1E1E] rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow duration-200">
-          <label htmlFor="front">Card Front</label>
-          <input
-            type="text"
-            placeholder="Card front..."
-            {...register("front")}
-          />
-          {errors.front && (
-            <p className="mt-1 text-xs text-red-500">{errors.front.message}</p>
-          )}
+    <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+      <div className="group relative">
+        <div className="bg-card border border-border rounded-xl p-6 transition-all duration-300 hover:shadow-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:items-stretch">
+            <div className="space-y-3 flex flex-col">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-3 h-3 bg-primary rounded-full" />
+                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                  Front
+                </span>
+              </div>
+              <div className="bg-secondary/30 rounded-lg p-4 min-h-[120px] flex flex-col flex-1">
+                <input
+                  type="text"
+                  placeholder="Card front..."
+                  className="border border-border rounded-md p-2 bg-background"
+                  {...register("front")}
+                />
+                {errors.front && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.front.message}
+                  </p>
+                )}
 
-          <label htmlFor="frontImage">Attach an image</label>
-          <div className="flex flex-row gap-3">
-            <button type="button" onClick={removeFrontImage}>
-              <Image src={remove_selection_icon} alt="Remove image" />
-            </button>
-            <input
-              type="file"
-              id="frontImageInput"
-              onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
-                  setValue("frontImage", e.target.files);
-                  setIsNewFrontImage(true);
-                }
-              }}
-            />
-          </div>
+                <div className="flex flex-col mt-6 items-center content-center justify-center">
+                  <label
+                    className="text-sm font-medium text-muted-foreground uppercase"
+                    htmlFor="frontImage"
+                  >
+                    Attach an image
+                  </label>
+                  <div className="flex flex-col gap-3 my-3 items-center">
+                    <input
+                      type="file"
+                      id="frontImageInput"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setValue("frontImage", e.target.files);
+                          setIsNewFrontImage(true);
+                        }
+                      }}
+                    />
+                    {(watch("frontImage")?.[0] || frontImageUrlDisplayed) && (
+                      <button type="button" onClick={removeFrontImage}>
+                        <Image src={remove_selection} alt="Remove image" />
+                      </button>
+                    )}
+                  </div>
+                </div>
 
-          {errors.frontImage && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.frontImage.message}
-            </p>
-          )}
+                {errors.frontImage && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.frontImage.message}
+                  </p>
+                )}
 
-          {(watch("frontImage")?.[0] || frontImageUrlDisplayed) && (
-            <Image
-              src={
-                watch("frontImage")?.[0]
-                  ? URL.createObjectURL(watch("frontImage")[0])
-                  : (frontImageUrlDisplayed as string)
-              }
-              alt={card.front}
-              width={250}
-              height={250}
-              className="mx-auto mt-2"
-            />
-          )}
-        </div>
-
-        {/* Back Card Section */}
-        <div className="flex flex-col text-gray-400 mt-2 gap-1">
-          <label htmlFor="back">Card Back</label>
-          <input type="text" placeholder="Card back..." {...register("back")} />
-          {errors.back && (
-            <p className="mt-1 text-xs text-red-500">{errors.back.message}</p>
-          )}
-
-          <label htmlFor="backImage">Attach an image</label>
-          <div className="flex flex-row gap-3">
-            <button type="button" onClick={removeBackImage}>
-              <Image src={remove_selection_icon} alt="Remove image" />
-            </button>
-            <input
-              type="file"
-              id="backImageInput"
-              onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
-                  setValue("backImage", e.target.files);
-                  setIsNewBackImage(true);
-                }
-              }}
-            />
-          </div>
-
-          {errors.backImage && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.backImage.message}
-            </p>
-          )}
-
-          {(watch("backImage")?.[0] || backImageUrlDisplayed) && (
-            <Image
-              src={
-                watch("backImage")?.[0]
-                  ? URL.createObjectURL(watch("backImage")[0])
-                  : (backImageUrlDisplayed as string)
-              }
-              alt={card.back}
-              width={250}
-              height={250}
-              className="mx-auto mt-2"
-            />
-          )}
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-row justify-evenly mt-5">
-          <button type="submit">
-            <div className="flex flex-row gap-2">
-              <p>Confirm</p>
-              <Image src={check_icon} alt="Create card" />
+                {(watch("frontImage")?.[0] || frontImageUrlDisplayed) && (
+                  <Image
+                    src={
+                      watch("frontImage")?.[0]
+                        ? URL.createObjectURL(watch("frontImage")[0])
+                        : (frontImageUrlDisplayed as string)
+                    }
+                    alt={card.front}
+                    width={250}
+                    height={250}
+                    className="mx-auto mt-2"
+                  />
+                )}
+              </div>
             </div>
-          </button>
-          <button type="button" onClick={() => setIsEditing(false)}>
-            Cancel
-          </button>
+
+            <div className="space-y-3 flex flex-col">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-3 h-3 bg-accent rounded-full" />
+                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                  Back
+                </span>
+              </div>
+              <div className="bg-accent/10 rounded-lg p-4 min-h-[120px] flex flex-col flex-1">
+                <input
+                  type="text"
+                  placeholder="Card back..."
+                  className="border border-border rounded-md p-2 bg-background"
+                  {...register("back")}
+                />
+                {errors.back && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.back.message}
+                  </p>
+                )}
+
+                <div className="flex flex-col mt-6 items-center content-center justify-center">
+                  <label
+                    className="text-sm font-medium text-muted-foreground uppercase"
+                    htmlFor="backImage"
+                  >
+                    Attach an image
+                  </label>
+                  <div className="flex flex-col gap-3 my-3 items-center">
+                    <input
+                      type="file"
+                      id="backImageInput"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          setValue("backImage", e.target.files);
+                          setIsNewBackImage(true);
+                        }
+                      }}
+                    />
+                    {(watch("backImage")?.[0] || backImageUrlDisplayed) && (
+                      <button type="button" onClick={removeBackImage}>
+                        <Image src={remove_selection} alt="Remove image" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {errors.backImage && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors.backImage.message}
+                  </p>
+                )}
+
+                {(watch("backImage")?.[0] || backImageUrlDisplayed) && (
+                  <Image
+                    src={
+                      watch("backImage")?.[0]
+                        ? URL.createObjectURL(watch("backImage")[0])
+                        : (backImageUrlDisplayed as string)
+                    }
+                    alt={card.back}
+                    width={250}
+                    height={250}
+                    className="mx-auto mt-2"
+                  />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      </form>
-    </div>
+      </div>
+      <div className="flex flex-row justify-evenly mt-5">
+        <button type="submit">
+          <div className="flex flex-row gap-2">
+            <p>Confirm</p>
+            <Image src={check} alt="Create card" />
+          </div>
+        </button>
+        <button type="button" onClick={() => setIsEditing(false)}>
+          Cancel
+        </button>
+      </div>
+    </form>
   );
 }
