@@ -30,7 +30,7 @@ export default function Deck() {
   const decrementIndex = () => {
     if (index > 0) setIndex(index - 1);
   };
-  
+
   return (
     <>
       {settingUp ? (
@@ -39,44 +39,46 @@ export default function Deck() {
           setSettingUp={setSettingUp}
         />
       ) : (
-        <div className="flex flex-col items-center gap-6 w-full">
-          <div>
-            {index + 1} / {flashcards.length}
-          </div>
-          <Slide
-            key={flashcards[index].id}
-            flashcard={flashcards[index]}
-            startFront={startFront}
-            setIsSlideComplete={null}
-          />
-          <div>
-            <button disabled={index === 0} onClick={decrementIndex}>
-              <Image
-                src={
-                  index === 0
-                    ? chevron_backward_disabled
-                    : chevron_backward
-                }
-                alt="Previous card"
-                width={48}
+        <>
+          {flashcards.length > 0 && (
+            <div className="flex flex-col items-center gap-6 w-full">
+              <div>
+                {index + 1} / {flashcards.length}
+              </div>
+              <Slide
+                key={flashcards[index].id}
+                flashcard={flashcards[index]}
+                startFront={startFront}
+                setIsSlideComplete={null}
               />
-            </button>
-            <button
-              disabled={index === flashcards.length - 1}
-              onClick={incrementIndex}
-            >
-              <Image
-                src={
-                  index === flashcards.length - 1
-                    ? chevron_forward_disabled
-                    : chevron_forward
-                }
-                alt="Next card"
-                width={48}
-              />
-            </button>
-          </div>
-        </div>
+              <div>
+                <button disabled={index === 0} onClick={decrementIndex}>
+                  <Image
+                    src={
+                      index === 0 ? chevron_backward_disabled : chevron_backward
+                    }
+                    alt="Previous card"
+                    width={48}
+                  />
+                </button>
+                <button
+                  disabled={index === flashcards.length - 1}
+                  onClick={incrementIndex}
+                >
+                  <Image
+                    src={
+                      index === flashcards.length - 1
+                        ? chevron_forward_disabled
+                        : chevron_forward
+                    }
+                    alt="Next card"
+                    width={48}
+                  />
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </>
   );

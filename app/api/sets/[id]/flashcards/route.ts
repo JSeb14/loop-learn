@@ -1,9 +1,26 @@
 import {
   deleteCard,
+  getCardsBySet,
   updateCard,
 } from "@/lib/controllers/flashcards/flashcardsController";
 import Flashcard from "@/lib/types/Flashcard";
 import { NextResponse } from "next/server";
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const { data, error } = await getCardsBySet(id);
+    if (error)
+      return NextResponse.json({ error: error.message }, { status: 500 });
+
+    return NextResponse.json(data);
+  } catch (error) {
+    return NextResponse.json({ error: error }, { status: 401 });
+  }
+}
 
 export async function PUT(
   request: Request,
