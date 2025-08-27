@@ -1,15 +1,18 @@
-import { deleteCard, updateCard } from "@/lib/controllers/flashcards/flashcardsController";
+import {
+  deleteCard,
+  updateCard,
+} from "@/lib/controllers/flashcards/flashcardsController";
 import Flashcard from "@/lib/types/Flashcard";
 import { NextResponse } from "next/server";
 
 export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
 
-    const updates: Partial<Flashcard> = await req.json();
+    const updates: Partial<Flashcard> = await request.json();
 
     const { data, error } = await updateCard(id, updates);
 
@@ -30,11 +33,11 @@ export async function PUT(
 }
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
 
     const { error } = await deleteCard(id);
 

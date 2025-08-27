@@ -4,10 +4,10 @@ import FlashcardSet from "@/lib/types/Flashcard";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
 
     const updates: Partial<FlashcardSet> = await req.json();
 
@@ -31,10 +31,10 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = params.id;
+    const { id } = await params;
 
     const { error } = await deleteSet(id);
 
