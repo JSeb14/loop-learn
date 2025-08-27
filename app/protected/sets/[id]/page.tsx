@@ -3,7 +3,11 @@ import { getCardsBySet } from "@/lib/controllers/flashcards/flashcardsController
 import { getSetById } from "@/lib/controllers/sets/setsController";
 import { Fragment } from "react";
 
-export default async function Set(params: Promise<{ id: string }>) {
+export default async function Set({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id: setId } = await params;
 
   const { set, error: setError } = await getSetById(setId);
