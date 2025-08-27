@@ -13,4 +13,16 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
 
+eslintConfig.push({
+  rules: {
+    "react-hooks/exhaustive-deps": [
+      "warn",
+      {
+        additionalHooks: "",
+        enableDangerousAutofixSuggestions: false,
+      },
+    ],
+  },
+});
+
 export default eslintConfig;
