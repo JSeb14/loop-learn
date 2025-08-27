@@ -23,10 +23,12 @@ export default function Practice() {
 
   const [rating, setRating] = useState<number>(3);
 
+  // Fetch flashcards if not available
   useEffect(() => {
     if (!flashcards || flashcards.length === 0) getFlashcards(params.id);
   }, [flashcards, getFlashcards, settingUp, settingUp, params.id]);
 
+  // Set session set based on due cards
   useEffect(() => {
     const dueCards = flashcards.filter((card) => {
       const today = new Date();
@@ -36,8 +38,9 @@ export default function Practice() {
       return nextReviewedDate <= today;
     });
     setSessionSet(dueCards);
-  }, [flashcards]);
+  }, []);
 
+  // Reset rating and slide completion state when session set changes
   useEffect(() => {
     setRating(3);
     setIsSlideComplete(false);
@@ -59,7 +62,7 @@ export default function Practice() {
       
       // Reinsert flashcard into the session set if low rating
       if (rating < 3) {
-        setSessionSet([...remainingCards, currentCard]);
+        setSessionSet([...remainingCards, updatedCard]);
       } else {
         setSessionSet(remainingCards);
       }
@@ -67,8 +70,6 @@ export default function Practice() {
       console.error("Failed to update flashcard:", error);
     }
   };
-
-  console.log("flashcards:", sessionSet);
 
   return (
     <>
