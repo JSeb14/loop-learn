@@ -47,6 +47,7 @@ export default function Deck() {
             key={flashcards[index].id}
             flashcard={flashcards[index]}
             startFront={startFront}
+            setIsSlideComplete={null}
           />
           <div>
             <button disabled={index === 0} onClick={decrementIndex}>
