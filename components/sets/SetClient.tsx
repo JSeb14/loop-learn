@@ -91,7 +91,7 @@ export default function SetClient({
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto space-y-8">
+    <div className="w-full space-y-8">
       <div className="card-modern p-8 text-center">
         {!isUpdatingSet ? (
           <div className="space-y-6">
@@ -163,6 +163,12 @@ export default function SetClient({
             {flashcards?.length || 0} cards
           </span>
         </div>
+
+        {isAdding && (
+          <div className="card-modern p-6">
+            <DynamicCreateCard setId={setId} setIsAdding={setIsAdding} />
+          </div>
+        )}
 
         {flashcards && flashcards.length > 0 ? (
           <>

@@ -28,7 +28,7 @@ export default function SetLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col w-full gap-4 min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
       <nav className="bg-card/80 rounded-xl backdrop-blur-md border-b border-border/50 shadow-sm sticky top-0 z-10">
-        <div className="max-w-7xl py-4 px-6">
+        <div className="w-full py-4 px-6">
           <Link
             href={items[0].link}
             className="group flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-secondary/50 mb-4"
@@ -86,7 +86,7 @@ export default function SetLayout({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">{children}</div>
+      <div className="w-full mx-auto px-6 py-8">{children}</div>
     </div>
   );
 }

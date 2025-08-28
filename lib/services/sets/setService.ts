@@ -22,7 +22,7 @@ export async function createSet(
     router.push("/protected/sets");
   } else {
     const errorData = await response.json();
-    alert(`Error: ${errorData.error}`);
+    throw new Error(errorData.message || "Failed to create set");
   }
 }
 
@@ -30,5 +30,10 @@ export async function deleteSet(setId: string) {
   const response = await fetch(`/api/sets/${setId}`, {
     method: "DELETE",
   });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to delete set");
+  }
   return response;
 }

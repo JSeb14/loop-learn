@@ -1,17 +1,11 @@
 import Flashcard from "@/lib/types/Flashcard";
-import { createClient } from "@/lib/supabase/server";
+import { validateSession } from "@/lib/utils/auth";
 import { PostgrestError } from "@supabase/supabase-js";
 
 export const getCardsBySet = async (
   setId: string
 ): Promise<{ data: Flashcard[] | null; error: PostgrestError | null }> => {
-  const supabase = await createClient();
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (!sessionData || sessionError) {
-    throw new Error("Invalid session.");
-  }
+  const { supabase } = await validateSession();
 
   const { data, error } = await supabase
     .from("flashcard")
@@ -24,13 +18,7 @@ export const getCardsBySet = async (
 export const createCard = async (
   card: Flashcard
 ): Promise<{ data: Flashcard | null; error: PostgrestError | null }> => {
-  const supabase = await createClient();
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (!sessionData || sessionError) {
-    throw new Error("Invalid session.");
-  }
+  const { supabase } = await validateSession();
 
   const { data, error } = await supabase
     .from("flashcard")
@@ -52,13 +40,7 @@ export const updateCard = async (
   id: string,
   updates: Partial<Flashcard>
 ): Promise<{ data: Flashcard | null; error: PostgrestError | null }> => {
-  const supabase = await createClient();
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (!sessionData || sessionError) {
-    throw new Error("Invalid session.");
-  }
+  const { supabase } = await validateSession();
 
   const { data, error } = await supabase
     .from("flashcard")
@@ -82,15 +64,7 @@ export const updateCard = async (
 export const deleteCard = async (
   id: string
 ): Promise<{ error: PostgrestError | null }> => {
-  const supabase = await createClient();
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (!sessionData || sessionError) {
-    throw new Error("Invalid session.");
-  }
-
+  const { supabase } = await validateSession();
   const { error } = await supabase.from("flashcard").delete().eq("id", id);
-
   return { error };
 };

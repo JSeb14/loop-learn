@@ -6,16 +6,15 @@ export function useFlashcards() {
 
   const getFlashcards = useCallback(
     async (setId: string) => {
-      try {
-        const response = await fetch(`/api/sets/${setId}/flashcards`);
-        const data = await response.json();
-
-        setFlashcards(data);
-        return data;
-      } catch (error) {
-        console.error(`Failed to load flashcards for set ${setId}:`, error);
-        return [];
+      const response = await fetch(`/api/sets/${setId}/flashcards`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load flashcards for set ${setId}`);
       }
+      
+      const data = await response.json();
+      setFlashcards(data);
+      return data;
     },
     [setFlashcards]
   );

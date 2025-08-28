@@ -3,7 +3,6 @@ import signedUrlStore from "../stores/signedUrlStore";
 
 export function useSignedUrl(path: string | null) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<Error | null>(null);
   const [url, setUrl] = useState<string | null>(null);
 
   const { getUrl, addUrl } = signedUrlStore();
@@ -23,7 +22,6 @@ export function useSignedUrl(path: string | null) {
 
       try {
         setIsLoading(true);
-        setError(null);
 
         const response = await fetch("/api/signed_url", {
           method: "POST",
@@ -43,8 +41,8 @@ export function useSignedUrl(path: string | null) {
           setUrl(data.signedUrl);
         }
       } catch (err) {
-        setError(err instanceof Error ? err : new Error(String(err)));
-        console.error("Error fetching signed URL:", err);
+        // Error will be caught by error boundary
+        throw err;
       } finally {
         setIsLoading(false);
       }
@@ -53,5 +51,5 @@ export function useSignedUrl(path: string | null) {
     fetchUrl();
   }, [path, getUrl, addUrl]);
 
-  return { url, isLoading, error };
+  return { url, isLoading };
 }

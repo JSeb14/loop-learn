@@ -73,33 +73,29 @@ const SetForm = ({
 
   async function update(form: SetFormValues) {
     if (setIsUpdating) setIsUpdating(true);
-    try {
-      const response = await fetch(`/api/sets/${setId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: form.name,
-          description: form.description,
-          isPrivate: form.isPrivate,
-          subject: form.subject,
-        }),
-      });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error updating set:", errorData);
-        return;
-      }
+    const response = await fetch(`/api/sets/${setId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: form.name,
+        description: form.description,
+        isPrivate: form.isPrivate,
+        subject: form.subject,
+      }),
+    });
 
-      const data = await response.json();
-      const updatedSet: FlashcardSet = data;
-      setCurrentSet(updatedSet);
-      if (setIsUpdating) setIsUpdating(false);
-    } catch (error) {
-      console.error("Failed to update set:", error);
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to update the set.");
     }
+
+    const data = await response.json();
+    const updatedSet: FlashcardSet = data;
+    setCurrentSet(updatedSet);
+    if (setIsUpdating) setIsUpdating(false);
   }
 
   return (

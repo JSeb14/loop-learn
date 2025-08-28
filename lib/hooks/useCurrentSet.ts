@@ -6,16 +6,15 @@ export function useCurrentSet() {
 
   const getSet = useCallback(
     async (id: string) => {
-      try {
-        const response = await fetch(`/api/sets/${id}`);
-        const data = await response.json();
-
-        setCurrentSet(data);
-        return data;
-      } catch (error) {
-        console.error(`Failed to load set ${id}:`, error);
-        return null;
+      const response = await fetch(`/api/sets/${id}`);
+      
+      if (!response.ok) {
+        throw new Error("Failed to load set");
       }
+      
+      const data = await response.json();
+      setCurrentSet(data);
+      return data;
     },
     [setCurrentSet]
   );

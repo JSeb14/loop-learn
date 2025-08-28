@@ -50,24 +50,20 @@ export default function Practice() {
     const currentCard = sessionSet[0];
     
     // Update flashcard using SM2 algorithm
-    try {
-      const updatedCard = await updateFlashcardSM2(currentCard, rating);
-      const otherCards = flashcards.filter(
-        (card) => card.id !== currentCard.id
-      );
-      setFlashcards([...otherCards, updatedCard]);
-      
-      // Remove the current card from the session set
-      const remainingCards = sessionSet.slice(1);
-      
-      // Reinsert flashcard into the session set if low rating
-      if (rating < 3) {
-        setSessionSet([...remainingCards, updatedCard]);
-      } else {
-        setSessionSet(remainingCards);
-      }
-    } catch (error) {
-      console.error("Failed to update flashcard:", error);
+    const updatedCard = await updateFlashcardSM2(currentCard, rating);
+    const otherCards = flashcards.filter(
+      (card) => card.id !== currentCard.id
+    );
+    setFlashcards([...otherCards, updatedCard]);
+    
+    // Remove the current card from the session set
+    const remainingCards = sessionSet.slice(1);
+    
+    // Reinsert flashcard into the session set if low rating
+    if (rating < 3) {
+      setSessionSet([...remainingCards, updatedCard]);
+    } else {
+      setSessionSet(remainingCards);
     }
   };
 

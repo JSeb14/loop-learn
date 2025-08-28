@@ -1,3 +1,5 @@
+import { th } from "zod/v4/locales";
+
 /**
  * Deletes images from storage by their paths
  */
@@ -6,25 +8,19 @@ export async function deleteImages(paths: (string | null)[]): Promise<boolean> {
 
   if (filteredPaths.length === 0) return true;
 
-  try {
-    const imgResponse = await fetch("/api/images", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ paths: filteredPaths }),
-    });
+  const imgResponse = await fetch("/api/images", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ paths: filteredPaths }),
+  });
 
-    if (!imgResponse.ok) {
-      console.error("Error deleting images");
-      return false;
-    }
-
-    return true;
-  } catch (err) {
-    console.error("Error deleting images", err);
-    return false;
+  if (!imgResponse.ok) {
+    throw new Error("Failed to delete images: " + imgResponse.statusText);
   }
+
+  return true;
 }
 
 export async function uploadImages(
@@ -48,7 +44,7 @@ export async function uploadImages(
       body: formData,
     });
     if (!response.ok) {
-      console.error("Error uploading front image");
+      throw new Error("Error uploading front image");
     } else {
       frontUrl = `set-${setId}/front/${uniqueId}-${frontImage.name}`;
     }
@@ -64,7 +60,7 @@ export async function uploadImages(
       body: formData,
     });
     if (!response.ok) {
-      console.error("Error uploading back image");
+      throw new Error("Error uploading back image: " + response.statusText);
     } else {
       backUrl = `set-${setId}/back/${uniqueId}-${backImage.name}`;
     }

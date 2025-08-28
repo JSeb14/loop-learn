@@ -1,17 +1,11 @@
-import { createClient } from "@/lib/supabase/server";
+import { validateSession } from "@/lib/utils/auth";
 import { StorageError } from "@supabase/storage-js";
 
 export const uploadImage = async (
   file: File,
   path: string
 ): Promise<{ error: StorageError | null }> => {
-  const supabase = await createClient();
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (!sessionData || sessionError) {
-    throw new Error("Invalid session.");
-  }
+  const { supabase } = await validateSession();
 
   const { error } = await supabase.storage
     .from("flashcards")
@@ -23,17 +17,7 @@ export const uploadImage = async (
 export const deleteImage = async (
   paths: string[]
 ): Promise<{ error: StorageError | null }> => {
-  const supabase = await createClient();
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (!sessionData || sessionError) {
-    throw new Error("Invalid session.");
-  }
-
+  const { supabase } = await validateSession();
   const { error } = await supabase.storage.from("flashcards").remove(paths);
-  if (error) {
-    console.error("Supabase delete error:", error);
-  }
   return { error };
 };
