@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { validateSession } from "@/lib/utils/auth";
 import { StorageError } from "@supabase/storage-js";
 
 export const createSignedUrl = async (
@@ -9,13 +9,7 @@ export const createSignedUrl = async (
   } | null;
   error: StorageError | null;
 }> => {
-  const supabase = await createClient();
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (!sessionData || sessionError) {
-    throw new Error("Invalid session.");
-  }
+  const { supabase } = await validateSession();
 
   const { data, error } = await supabase.storage
     .from("flashcards")

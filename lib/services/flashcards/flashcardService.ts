@@ -2,6 +2,7 @@ import Flashcard from "@/lib/types/Flashcard";
 import { uploadImages } from "../images/imageService";
 import { deleteImages } from "../images/imageService";
 import { v4 } from "uuid";
+import { th } from "zod/v4/locales";
 
 /**
  * Creates a new flashcard
@@ -32,26 +33,20 @@ export async function postCard(cardData: {
     back_image: backUrl,
   };
 
-  try {
-    const response = await fetch("/api/flashcards", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
+  const response = await fetch("/api/flashcards", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Error creating flashcard:", errorData);
-      return null;
-    }
-
-    return response;
-  } catch (error) {
-    console.error("Failed to create flashcard:", error);
-    return null;
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to create flashcard");
   }
+
+  return response;
 }
 
 /**
@@ -74,7 +69,6 @@ export async function updateFlashcard(
   }
 ): Promise<Response | null> {
 
-  console.log(updates);
   const {
     front,
     back,
@@ -100,7 +94,6 @@ export async function updateFlashcard(
   if (frontImage || backImage || isNewFrontImage || isNewBackImage) {
     // Delete old images if necessary
     if (paths.length > 0) {
-      console.log("Deleting old images:", paths);
       await deleteImages(paths);
     }
     // Upload new images
@@ -136,50 +129,38 @@ export async function updateFlashcard(
     };
   }
 
-  try {
-    const response = await fetch(`/api/flashcards/${card.id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
+  const response = await fetch(`/api/flashcards/${card.id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Error updating flashcard:", errorData);
-      return null;
-    }
-
-    return response;
-  } catch (error) {
-    console.error("Failed to update flashcard:", error);
-    return null;
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to update flashcard");
   }
+
+  return response;
 }
 
 /**
  * Deletes a flashcard and its associated images
  */
 export async function deleteFlashcard(card: Flashcard): Promise<boolean> {
-  try {
-    // Delete the flashcard from the database
-    const response = await fetch(`/api/flashcards/${card.id}`, {
-      method: "DELETE",
-    });
+  // Delete the flashcard from the database
+  const response = await fetch(`/api/flashcards/${card.id}`, {
+    method: "DELETE",
+  });
 
-    if (!response.ok) {
-      console.error("Failed to delete flashcard");
-      return false;
-    }
-
-    // If the flashcard had images, delete them
-    const paths = [card.front_image, card.back_image].filter(Boolean);
-    await deleteImages(paths);
-
-    return true;
-  } catch (error) {
-    console.error("Error deleting flashcard:", error);
-    return false;
+  if (!response.ok) {
+    throw new Error("Failed to delete flashcard");
   }
+
+  // If the flashcard had images, delete them
+  const paths = [card.front_image, card.back_image].filter(Boolean);
+  await deleteImages(paths);
+
+  return true;
 }

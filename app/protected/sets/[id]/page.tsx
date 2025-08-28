@@ -12,8 +12,8 @@ export default async function Set({
 
   const { set, error: setError } = await getSetById(setId);
   if (!set || setError) {
-    console.error("Error loading set details");
-    return <Fragment />;
+    // Error boundary will catch this automatically
+    throw new Error("Failed to load set details.");
   }
 
   const { data: flashcards, error: flashcardsError } = await getCardsBySet(
@@ -21,8 +21,8 @@ export default async function Set({
   );
 
   if (!flashcards || flashcardsError) {
-    console.error("No flashcards found");
-    return <Fragment />;
+    // Error boundary will catch this automatically
+    throw new Error("Failed to load flashcards for this set.");
   }
 
   return <SetClient initialSet={set} initialCards={flashcards} setId={setId} />;

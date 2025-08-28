@@ -1,21 +1,13 @@
 import FlashcardSet from "@/lib/types/FlashcardSet";
-import { createClient } from "@/lib/supabase/server";
+import { validateSession } from "@/lib/utils/auth";
 import { PostgrestError } from "@supabase/supabase-js";
 
 export const getAllSets = async (): Promise<{
   sets: FlashcardSet[] | null;
   error: PostgrestError | null;
 }> => {
-  const supabase = await createClient();
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (!sessionData || sessionError) {
-    throw new Error("Invalid session.");
-  }
-
+  const { supabase } = await validateSession();
   const { data, error } = await supabase.from("flashcard_set").select("*");
-
   return { sets: data as FlashcardSet[] | null, error };
 };
 
@@ -25,14 +17,7 @@ export const getSetById = async (
   set: FlashcardSet | null;
   error: PostgrestError | null;
 }> => {
-  const supabase = await createClient();
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (!sessionData || sessionError) {
-    throw new Error("Invalid session.");
-  }
-
+  const { supabase } = await validateSession();
   const { data, error } = await supabase
     .from("flashcard_set")
     .select("*")
@@ -46,13 +31,7 @@ export const updateSet = async (
   id: string,
   updates: Partial<FlashcardSet>
 ): Promise<{ data: FlashcardSet | null; error: PostgrestError | null }> => {
-  const supabase = await createClient();
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (!sessionData || sessionError) {
-    throw new Error("Invalid session.");
-  }
+  const { supabase } = await validateSession();
 
   const { data, error } = await supabase
     .from("flashcard_set")
@@ -71,29 +50,15 @@ export const updateSet = async (
 export const deleteSet = async (
   id: string
 ): Promise<{ error: PostgrestError | null }> => {
-  const supabase = await createClient();
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (!sessionData || sessionError) {
-    throw new Error("Invalid session.");
-  }
-
+  const { supabase } = await validateSession();
   const { error } = await supabase.from("flashcard_set").delete().eq("id", id);
-
   return { error };
 };
 
 export const createSet = async (
   set: FlashcardSet
 ): Promise<{ data: FlashcardSet | null; error: PostgrestError | null }> => {
-  const supabase = await createClient();
-  const { data: sessionData, error: sessionError } =
-    await supabase.auth.getSession();
-
-  if (!sessionData || sessionError) {
-    throw new Error("Invalid session.");
-  }
+  const { supabase } = await validateSession();
 
   const { data, error } = await supabase
     .from("flashcard_set")
