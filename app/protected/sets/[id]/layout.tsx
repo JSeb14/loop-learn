@@ -52,11 +52,11 @@ export default function SetLayout({ children }: { children: React.ReactNode }) {
                   key={index}
                   href={nav.link}
                   className={`
-            group flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 
+            group flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 
             ${
               isActive
                 ? "bg-primary text-primary-foreground shadow-md"
-                : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                : "text-muted-foreground bg-secondary hover:text-foreground hover:bg-secondary/50"
             }
           `}
                 >
@@ -75,7 +75,7 @@ export default function SetLayout({ children }: { children: React.ReactNode }) {
                     />
                   </div>
                   <span
-                    className={`font-large text-lg ${isActive ? "font-semibold" : ""}`}
+                    className={`font-large text-lg underline ${isActive ? "font-semibold" : ""}`}
                   >
                     {nav.label}
                   </span>
