@@ -19,7 +19,7 @@ export default function Slide({
   const { url: backImageUrl } = useSignedUrl(flashcard.back_image || null);
 
   return (
-    <div className="flex flex-col items-center space-y-6">
+    <div className="flex flex-col items-center space-y-6 max-w-screen-sm">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <div
           className={`w-2 h-2 rounded-full transition-colors duration-200 ${
@@ -36,14 +36,14 @@ export default function Slide({
       </div>
 
       <div
-        className="relative group cursor-pointer w-full max-w-xxl"
+        className="relative group cursor-pointer w-full"
         onClick={() => {
           setSide(!side);
           if (setIsSlideComplete) setIsSlideComplete(true);
         }}
       >
         <div
-          className={`relative card-modern p-8 min-h-[400px] min-w-[300px] flex flex-col items-center justify-center text-center transition-all duration-300 group-hover:shadow-2xl ${
+          className={`relative card-modern p-8 min-h-[400px] min-w-[300px] flex flex-col items-center justify-center text-center transition-all duration-300 group-hover:shadow-2xl wrap-break-word${
             side
               ? "bg-gradient-to-br from-card to-primary/5 border-primary/20"
               : "bg-gradient-to-br from-card to-accent/5 border-accent/20"
@@ -68,16 +68,16 @@ export default function Slide({
             </div>
           </div>
 
-          <div className="flex flex-col items-center justify-center space-y-6 w-full">
+          <div className="flex-col items-center justify-center space-y-6 w-full">
             {side ? (
               <>
-                <div
-                  className={`text-2xl font-semibold leading-relaxed ${
+                <p
+                  className={`text-2xl font-semibold leading-relaxed break-words ${
                     side ? "text-primary" : "text-accent"
                   }`}
                 >
                   {flashcard.front}
-                </div>
+                </p>
                 {frontImageUrl && (
                   <div className="relative">
                     <Image
@@ -92,13 +92,13 @@ export default function Slide({
               </>
             ) : (
               <>
-                <div
-                  className={`text-2xl font-semibold leading-relaxed ${
+                <p
+                  className={`text-2xl font-semibold leading-relaxed break-words ${
                     side ? "text-primary" : "text-accent"
                   }`}
                 >
                   {flashcard.back}
-                </div>
+                </p>
                 {backImageUrl && (
                   <div className="relative">
                     <Image
