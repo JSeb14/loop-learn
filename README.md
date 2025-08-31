@@ -1,105 +1,172 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# LoopLearn 🎓
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+A modern, intelligent flashcard application built with Next.js that helps you accelerate your learning through spaced repetition and customizable study sets.
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+## 🌟 Features
 
-## Features
+### Core Functionality
+- **Create Custom Flashcard Sets**: Build personalized flashcard collections for any subject
+- **Spaced Repetition Learning**: Implements the SM-2 algorithm for optimal memory retention
+- **Image Support**: Add images to both front and back of flashcards for visual learning
+- **Practice Modes**: Multiple study modes including practice sessions and quiz mode
+- **Progress Tracking**: Track your learning progress with confidence ratings and review intervals
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+### User Experience
+- **Modern UI**: Clean, responsive design with dark/light theme support
+- **User Authentication**: Secure account creation and management via Supabase Auth
+- **Real-time Sync**: All data synchronized across devices
+- **Search & Discovery**: Find and explore flashcard sets
+- **Private/Public Sets**: Control visibility of your flashcard collections
 
-## Demo
+## 🛠️ Tech Stack
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+### Frontend
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first styling
+- **Radix UI** - Accessible component primitives
+- **Zustand** - Lightweight state management
 
-## Deploy to Vercel
+### Backend & Database
+- **Supabase** - Backend-as-a-Service providing:
+  - PostgreSQL database
+  - Real-time subscriptions
+  - Authentication & authorization
+  - File storage for images
 
-Vercel deployment will guide you through creating a Supabase account and project.
+### Key Libraries
+- **React Hook Form** + **Zod** - Form handling and validation
+- **Lucide React** - Beautiful icons
+- **UUID** - Unique identifier generation
+- **Next Themes** - Theme switching support
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+## 🚀 Getting Started
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Supabase account
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+### Installation
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
-
-## Clone and run locally
-
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
-
-2. Create a Next.js app using the Supabase Starter template npx command
-
+1. **Clone the repository**
    ```bash
-   npx create-next-app --example with-supabase with-supabase-app
+   git clone https://github.com/yourusername/loop-learn.git
+   cd loop-learn
    ```
 
+2. **Install dependencies**
    ```bash
-   yarn create next-app --example with-supabase with-supabase-app
+   npm install
    ```
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
+3. **Set up environment variables**
+   Create a `.env.local` file in the root directory:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=your_supabase_anon_key
    ```
 
-3. Use `cd` to change into the app's directory
-
-   ```bash
-   cd with-supabase-app
-   ```
-
-4. Rename `.env.example` to `.env.local` and update the following:
-
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
-
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
-
-5. You can now run the Next.js local development server:
-
+4. **Run the development server**
    ```bash
    npm run dev
    ```
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+5. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+## 📖 How It Works
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+### Spaced Repetition Algorithm
+LoopLearn uses the SM-2 (SuperMemo 2) algorithm to optimize learning:
+- Cards are scheduled for review based on your performance
+- Successful recalls increase the interval between reviews
+- Difficult cards are reviewed more frequently
+- Each card has an ease factor that adjusts based on your confidence
 
-## Feedback and issues
+### Study Flow
+1. **Create a Set**: Add a new flashcard set with title, description, and subject
+2. **Add Cards**: Create flashcards with text and optional images
+3. **Practice**: Study cards using spaced repetition
+4. **Rate Confidence**: After each card, rate your confidence (1-5)
+5. **Track Progress**: Monitor your learning with review statistics
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+## 🏗️ Project Structure
 
-## More Supabase examples
+```
+loop-learn/
+├── app/                    # Next.js App Router pages
+│   ├── api/               # API routes
+│   ├── auth/              # Authentication pages
+│   ├── protected/         # Authenticated routes
+│   └── assets/            # Static assets
+├── components/            # React components
+│   ├── auth/             # Authentication components
+│   ├── flashcards/       # Flashcard management
+│   ├── practice/         # Study session components
+│   ├── sets/             # Set management
+│   └── ui/               # Reusable UI components
+├── lib/                  # Utilities and configurations
+│   ├── controllers/      # API controllers
+│   ├── hooks/           # Custom React hooks
+│   ├── services/        # Business logic
+│   ├── stores/          # Zustand state stores
+│   ├── supabase/        # Supabase configuration
+│   └── types/           # TypeScript type definitions
+└── middleware.ts         # Next.js middleware
+```
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+## 🔧 Key Components
+
+### Authentication
+- Email/password authentication via Supabase
+- Password reset functionality
+- Protected routes with middleware
+- Session management
+
+### Flashcard Management
+- CRUD operations for flashcards and sets
+- Image upload and storage
+- Batch operations for efficient data handling
+
+### Study System
+- SM-2 spaced repetition algorithm implementation
+- Confidence-based rating system
+- Review scheduling and due date calculation
+- Progress tracking and statistics
+
+## 🚀 Deployment
+
+The application is ready for deployment on platforms like Vercel, Netlify, or any Node.js hosting service.
+
+### Vercel Deployment
+1. Connect your GitHub repository to Vercel
+2. Configure environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 🎯 Future Enhancements
+
+- [ ] Study statistics and analytics dashboard
+- [ ] Collaborative flashcard sets
+- [ ] Export/import functionality
+- [ ] Mobile app development
+- [ ] Advanced scheduling algorithms
+- [ ] Gamification features
+
+---
+
+Built with ❤️ using Next.js and Supabase
