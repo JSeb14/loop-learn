@@ -1,6 +1,6 @@
-import { AuthButton } from "@/components/auth/auth-button";
 import logo from "@/app/assets/logo.png";
 import Image from "next/image";
+import { LandingAuthButton } from "@/components/auth/landing-auth-button";
 
 export default function Home() {
   return (
@@ -78,7 +78,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <AuthButton />
+              <LandingAuthButton />
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
               </div>

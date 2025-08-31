@@ -7,6 +7,7 @@ export type FlashcardStoreState = {
 
 export type FlashcardStoreActions = {
   setFlashcards: (data: Flashcard[]) => void;
+  clearFlashcards: () => void;
 };
 
 export type FlashcardStore = FlashcardStoreState & FlashcardStoreActions;
@@ -15,6 +16,7 @@ const useFlashcardStore = create<FlashcardStore>((set) => ({
   flashcards: [],
 
   setFlashcards: (data: Flashcard[]) => set({ flashcards: data }),
+  clearFlashcards: () => set({ flashcards: [] }),
 }));
 
 export default useFlashcardStore;

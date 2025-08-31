@@ -164,12 +164,6 @@ export default function SetClient({
           </span>
         </div>
 
-        {isAdding && (
-          <div className="card-modern p-6">
-            <DynamicCreateCard setId={setId} setIsAdding={setIsAdding} />
-          </div>
-        )}
-
         {flashcards && flashcards.length > 0 ? (
           <>
             <div className="space-y-4">
@@ -185,8 +179,8 @@ export default function SetClient({
             <CreateCardButton />
           </>
         ) : (
-          <div className="text-center py-16">
-            <div className="max-w-md mx-auto">
+          <div className="w-full text-center py-16">
+            <div className="w-full mx-auto">
               <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
                 <Image
                   src={add_circle}
@@ -202,19 +196,7 @@ export default function SetClient({
               <p className="text-muted-foreground mb-6">
                 Start building your study set by adding your first flashcard!
               </p>
-              <button
-                onClick={() => setIsAdding(true)}
-                className="btn-primary inline-flex items-center gap-2"
-              >
-                <Image
-                  src={add_circle}
-                  width={16}
-                  height={16}
-                  alt="Create"
-                  className="filter brightness-0 invert"
-                />
-                Add Your First Card
-              </button>
+              <CreateCardButton />
             </div>
           </div>
         )}
