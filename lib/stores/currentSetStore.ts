@@ -7,6 +7,7 @@ export type CurrentSetStoreState = {
 
 export type CurrentSetStoreActions = {
   setCurrentSet: (data: FlashcardSet | null) => void;
+  clearCurrentSet: () => void;
 };
 
 export type CurrentSetStore = CurrentSetStoreState & CurrentSetStoreActions;
@@ -15,6 +16,7 @@ const useCurrentSetStore = create<CurrentSetStore>((set) => ({
   currentSet: null,
 
   setCurrentSet: (data: FlashcardSet | null) => set({ currentSet: data }),
+  clearCurrentSet: () => set({ currentSet: null }),
 }));
 
 export default useCurrentSetStore;

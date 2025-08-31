@@ -7,6 +7,7 @@ export type SetStoreState = {
 
 export type SetStoreActions = {
   setSets: (data: FlashcardSet[]) => void;
+  clearSets: () => void;
 };
 
 export type SetStore = SetStoreState & SetStoreActions;
@@ -15,6 +16,7 @@ const useSetStore = create<SetStore>((set) => ({
   sets: [],
 
   setSets: (data: FlashcardSet[]) => set({ sets: data }),
+  clearSets: () => set({ sets: [] }),
 }));
 
 export default useSetStore;
