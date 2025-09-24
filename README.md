@@ -2,7 +2,7 @@
 
 A modern, intelligent flashcard application built with Next.js that helps you accelerate your learning through spaced repetition and customizable study sets.
 
-## 🌟 Features
+## Features
 
 ### Core Functionality
 - **Create Custom Flashcard Sets**: Build personalized flashcard collections for any subject
@@ -18,7 +18,7 @@ A modern, intelligent flashcard application built with Next.js that helps you ac
 - **Search & Discovery**: Find and explore flashcard sets
 - **Private/Public Sets**: Control visibility of your flashcard collections
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 ### Frontend
 - **Next.js 15** - React framework with App Router
@@ -40,7 +40,7 @@ A modern, intelligent flashcard application built with Next.js that helps you ac
 - **UUID** - Unique identifier generation
 - **Next Themes** - Theme switching support
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 18+ 
@@ -91,7 +91,7 @@ LoopLearn uses the SM-2 (SuperMemo 2) algorithm to optimize learning:
 4. **Rate Confidence**: After each card, rate your confidence (1-5)
 5. **Track Progress**: Monitor your learning with review statistics
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 loop-learn/
@@ -116,7 +116,7 @@ loop-learn/
 └── middleware.ts         # Next.js middleware
 ```
 
-## 🔧 Key Components
+## Key Components
 
 ### Authentication
 - Email/password authentication via Supabase
@@ -135,7 +135,7 @@ loop-learn/
 - Review scheduling and due date calculation
 - Progress tracking and statistics
 
-## 🚀 Deployment
+## Deployment
 
 The application is ready for deployment on platforms like Vercel, Netlify, or any Node.js hosting service.
 
@@ -144,7 +144,7 @@ The application is ready for deployment on platforms like Vercel, Netlify, or an
 2. Configure environment variables in Vercel dashboard
 3. Deploy automatically on push to main branch
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
@@ -154,11 +154,11 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
+## License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source and available under the [MIT License].
 
-## 🎯 Future Enhancements
+## Future Enhancements
 
 - [ ] Study statistics and analytics dashboard
 - [ ] Collaborative flashcard sets
